@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sable Watch</string>
+    <string name="title">watch</string>
+    <string name="not_connected">No watch connected yet</string>
+    <string name="section_face">Watch face</string>
+    <string name="section_cities">World clock cities</string>
+    <string name="section_agenda">Agenda source</string>
+    <string name="section_messages">Messages &amp; notifications</string>
+    <string name="section_health">Health &amp; sensors</string>
+    <string name="section_connection">Connection</string>
+    <string name="coming_next">coming next</string>
+    <string name="hint">↑↓ move · Enter open · 1–6 jump</string>
+</resources>

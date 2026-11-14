@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="watch_face_name">Sable</string>
+    <string name="slot_top_arc">Top arc: agenda or world clock</string>
+    <string name="slot_messages">Messages</string>
+    <string name="slot_weather">Weather</string>
+    <string name="slot_heart_rate">Heart rate</string>
+    <string name="slot_battery">Battery</string>
+    <string name="slot_steps">Steps</string>
+</resources>

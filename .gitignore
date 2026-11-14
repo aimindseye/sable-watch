@@ -1,0 +1,14 @@
+.gradle/
+**/build/
+.kotlin/
+
+# Android Studio / local SDK state. Shared run configurations live in .run/.
+.idea/
+local.properties
+*.iml
+.DS_Store
+
+# Signing material never goes in the repository (docs/RELEASING.md).
+*.jks
+*.keystore
+keystore.properties
