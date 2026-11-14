@@ -20,8 +20,10 @@ android {
 
     buildTypes {
         release {
-            // A WFF face has no code to shrink.
-            isMinifyEnabled = false
+            // A WFF face has no code, so R8 has nothing to shrink; it stays on so every release
+            // build is configured the same way.
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             signingConfig = null
         }
     }

@@ -36,3 +36,12 @@ subprojects {
         }
     }
 }
+
+// Every resolved dependency is pinned in each module's gradle.lockfile, and its checksum in
+// gradle/verification-metadata.xml. After changing a version, run the CI task list from
+// .github/workflows/android.yml with --write-locks --write-verification-metadata sha256 added.
+allprojects {
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+}

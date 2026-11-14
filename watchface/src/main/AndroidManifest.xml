@@ -5,7 +5,9 @@
 
     <!-- hasCode=false: a Watch Face Format face is resources only. -->
     <application
+        android:allowBackup="false"
         android:hasCode="false"
+        android:usesCleartextTraffic="false"
         android:icon="@drawable/preview"
         android:label="@string/watch_face_name">
 

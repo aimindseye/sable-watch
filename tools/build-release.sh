@@ -33,8 +33,9 @@ out="${SABLEWATCH_RELEASE_DIR:-$HOME/Downloads/sable-watch-release/$version}"
 mkdir -p "$out"
 read -rsp "Keystore password for $SABLEWATCH_KEYSTORE: " pw; echo
 sign() {
+    local unsigned="$1" name="$2"
     printf '%s\n' "$pw" | "$apksigner" sign --ks "$SABLEWATCH_KEYSTORE" --ks-key-alias "$SABLEWATCH_KEY_ALIAS" \
-        --ks-pass stdin --out "$out/$2" "$1"
+        --ks-pass stdin --out "$out/$name" "$unsigned"
 }
 sign watchface/build/outputs/apk/release/watchface-release-unsigned.apk "sable-watchface-$version.apk"
 sign watch/build/outputs/apk/release/watch-release-unsigned.apk "sable-watch-wear-$version.apk"
