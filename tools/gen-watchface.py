@@ -13,6 +13,7 @@ BUBBLE = "#FF0D1216"
 BUBBLE_EDGE = "#FF1D2A31"
 TRACK = "#FF1A2A33"
 FONT = "SYNC_TO_DEVICE"
+COMPLICATION_END = "      </Complication>\n"
 
 # id, name, centre x, centre y, radius, supported types, default provider, default type
 SLOTS = [
@@ -82,43 +83,45 @@ def slot(sid, name, cx, cy, r, types, provider, ptype):
     ]
     isz = max(18, r // 2 + 4)
     tsz = 20 if r >= 36 else 17
+    j = i + "  "
+
+    def complication(ctype, *parts):
+        out.extend([f'      <Complication type="{ctype}">\n', bubble(d, j), *parts, COMPLICATION_END])
+
     # SHORT_TEXT: icon on top, value below (the BB10 bubbles).
-    out.append('      <Complication type="SHORT_TEXT">\n')
-    out.append(bubble(d, i + "  "))
-    out.append(icon(d, isz, int(r * 0.30), i + "  "))
-    out.append(text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", i + "  ",
-                    ambient=f'{i}    <Variant mode="AMBIENT" target="alpha" value="200"/>\n'))
-    out.append('      </Complication>\n')
+    complication(
+        "SHORT_TEXT",
+        icon(d, isz, int(r * 0.30), j),
+        text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", j,
+             ambient=f'{i}    <Variant mode="AMBIENT" target="alpha" value="200"/>\n'),
+    )
     # MONOCHROMATIC_IMAGE: icon only.
-    out.append('      <Complication type="MONOCHROMATIC_IMAGE">\n')
-    out.append(bubble(d, i + "  "))
-    out.append(icon(d, int(d * 0.55), int(d * 0.225), i + "  "))
-    out.append('      </Complication>\n')
+    complication("MONOCHROMATIC_IMAGE", icon(d, int(d * 0.55), int(d * 0.225), j))
     if "SMALL_IMAGE" in types:
         s = int(d * 0.6)
-        out.append('      <Complication type="SMALL_IMAGE">\n')
-        out.append(bubble(d, i + "  "))
-        out.append(f'{i}  <PartImage x="{(d - s) // 2}" y="{(d - s) // 2}" width="{s}" height="{s}">\n'
-                   f'{i}    <Image resource="[COMPLICATION.SMALL_IMAGE]"/>\n{i}  </PartImage>\n')
-        out.append('      </Complication>\n')
+        complication(
+            "SMALL_IMAGE",
+            f'{i}  <PartImage x="{(d - s) // 2}" y="{(d - s) // 2}" width="{s}" height="{s}">\n'
+            f'{i}    <Image resource="[COMPLICATION.SMALL_IMAGE]"/>\n{i}  </PartImage>\n',
+        )
     if "RANGED_VALUE" in types:
         # A cyan progress ring round the bubble, as on the battery and steps bubbles.
         frac = ("([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / "
                 "([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])")
-        out.append('      <Complication type="RANGED_VALUE">\n')
-        out.append(bubble(d, i + "  "))
-        out.append(f'{i}  <PartDraw x="0" y="0" width="{d}" height="{d}">\n'
-                   f'{i}    <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
-                   f'{i}      <Stroke color="{TRACK}" thickness="4"/>\n{i}    </Ellipse>\n'
-                   f'{i}    <Arc centerX="{r}" centerY="{r}" width="{d - 4}" height="{d - 4}" startAngle="0" endAngle="360">\n'
-                   f'{i}      <Stroke color="{CYAN}" thickness="4" cap="ROUND"/>\n'
-                   f'{i}      <Transform target="endAngle" value="360 * {frac}"/>\n'
-                   f'{i}    </Arc>\n'
-                   f'{i}    <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
-                   f'{i}  </PartDraw>\n')
-        out.append(icon(d, isz, int(r * 0.30), i + "  "))
-        out.append(text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", i + "  "))
-        out.append('      </Complication>\n')
+        complication(
+            "RANGED_VALUE",
+            f'{i}  <PartDraw x="0" y="0" width="{d}" height="{d}">\n'
+            f'{i}    <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
+            f'{i}      <Stroke color="{TRACK}" thickness="4"/>\n{i}    </Ellipse>\n'
+            f'{i}    <Arc centerX="{r}" centerY="{r}" width="{d - 4}" height="{d - 4}" startAngle="0" endAngle="360">\n'
+            f'{i}      <Stroke color="{CYAN}" thickness="4" cap="ROUND"/>\n'
+            f'{i}      <Transform target="endAngle" value="360 * {frac}"/>\n'
+            f'{i}    </Arc>\n'
+            f'{i}    <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
+            f'{i}  </PartDraw>\n',
+            icon(d, isz, int(r * 0.30), j),
+            text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", j),
+        )
     out.append('    </ComplicationSlot>\n')
     return "".join(out)
 
@@ -144,7 +147,7 @@ def top_arc():
             '<Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>\n'
             '          </TextCircular>\n'
             '        </PartText>\n'
-            '      </Complication>\n'
+            + COMPLICATION_END
         )
     return body + '    </ComplicationSlot>\n'
 
