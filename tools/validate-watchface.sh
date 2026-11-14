@@ -25,7 +25,7 @@ git clone -q --filter=blob:none --sparse https://github.com/google/watchface.git
 git -C "$work/wff" checkout -q "$WFF_COMMIT"
 git -C "$work/wff" sparse-checkout set third_party/wff/specification/documents/1
 
-cp "$ROOT/tools/WffSchemaCheck.java" "$work/"
+cp "$ROOT/tools/src/sablewatch/tools/WffSchemaCheck.java" "$work/"
 cp="$work/xerces.jar:$work/xpath2.jar:$work/cup.jar:$work/xml-apis.jar"
 javac -d "$work" -cp "$cp" "$work/WffSchemaCheck.java"
 java -cp "$cp:$work" sablewatch.tools.WffSchemaCheck \
