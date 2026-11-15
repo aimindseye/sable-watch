@@ -1,7 +1,7 @@
 // The phone companion. Two builds of one app, with the same package name:
-//   sable    for SableOS, where it reads Sable Calendar, Sable Weather and Hub directly;
-//   generic  for any Android phone (for example with TenSeven Launcher), using the standard
-//            Android calendar and notification APIs.
+//   sable    for SableOS, where it reads Sable Hub, Sable Calendar and Sable Weather;
+//   generic  for any Android phone: TenSeven Launcher's Hub counts when present, the phone's
+//            calendars, Open-Meteo weather, and a notification count as the fallback.
 // Same package name and signing key as :watch, which the Wear OS Data Layer needs.
 plugins {
     id("com.android.application")
@@ -64,5 +64,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.play.services.wearable)
+    implementation(project(":shared"))
     testImplementation(libs.junit)
 }

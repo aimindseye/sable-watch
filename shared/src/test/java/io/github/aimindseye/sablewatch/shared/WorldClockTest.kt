@@ -1,9 +1,9 @@
-package io.github.aimindseye.sablewatch.complications
+package io.github.aimindseye.sablewatch.shared
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
 import java.time.Instant
 import java.time.ZoneId
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class WorldClockTest {
     private val nov9 = Instant.parse("2026-11-09T14:09:00Z")

@@ -42,5 +42,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.wear.complications.data.source.ktx)
+    implementation(libs.play.services.wearable)
+    implementation(project(":shared"))
     testImplementation(libs.junit)
 }

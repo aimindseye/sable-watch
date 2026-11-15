@@ -31,6 +31,7 @@ The watch app and the phone app share one package name on purpose: the Wear OS D
 
 - [Getting started on Windows](docs/GETTING_STARTED.md): Android Studio, the Wear OS emulator, and a Galaxy Watch over Wi-Fi.
 - [Design and recommendations](docs/DESIGN.md): what each part of the face needs, the two phone builds, and what's feasible.
+- [What the phone sends the watch](docs/DATA.md): sources on SableOS and on other phones, privacy, and when it syncs.
 - [Releasing](docs/RELEASING.md): signing on your computer, and the package names to register.
 
 ## Build

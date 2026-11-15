@@ -1,4 +1,4 @@
-package io.github.aimindseye.sablewatch.complications
+package io.github.aimindseye.sablewatch.shared
 
 import java.time.Instant
 import java.time.ZoneId
@@ -19,7 +19,7 @@ object WorldClock {
     val DEFAULT_CITIES = listOf(
         WorldCity("LDN", ZoneId.of("Europe/London")),
         WorldCity("NYC", ZoneId.of("America/New_York")),
-        WorldCity("TOK", ZoneId.of("Asia/Tokyo")),
+        WorldCity("TOK", ZoneId.of("Asia/Tokyo"))
     )
 
     /** The arc fits three cities; more would be cut off at the bezel. */
@@ -36,6 +36,5 @@ object WorldClock {
     }
 
     /** The short form for a small slot: the first city only, for example "LDN 14:09". */
-    fun short(cities: List<WorldCity>, at: Instant, use24Hour: Boolean): String =
-        line(cities.take(1), at, use24Hour)
+    fun short(cities: List<WorldCity>, at: Instant, use24Hour: Boolean): String = line(cities.take(1), at, use24Hour)
 }

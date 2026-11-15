@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault">
 
-        <!-- Works without the phone: the world clock is computed on the watch. -->
+        <!-- Works without the phone: the world clock is computed on the watch, and the other
+             sources keep the last state the phone sent. -->
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
@@ -32,6 +33,88 @@
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="1800" />
+            <!-- The Sable face may use this source as its default without asking (see watchface.xml). -->
+            <meta-data
+                android:name="android.support.wearable.complications.SAFE_WATCH_FACES"
+                android:value="io.github.aimindseye.sablewatch.face" />
+        </service>
+        <service
+            android:name=".complications.AgendaPeekDataSource"
+            android:exported="true"
+            android:icon="@drawable/ic_sable"
+            android:label="@string/agenda_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="LONG_TEXT,SHORT_TEXT" />
+            <!-- Pushed by the phone (StateListenerService); no polling. -->
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0" />
+            <!-- The Sable face may use this source as its default without asking (see watchface.xml). -->
+            <meta-data
+                android:name="android.support.wearable.complications.SAFE_WATCH_FACES"
+                android:value="io.github.aimindseye.sablewatch.face" />
+        </service>
+
+        <service
+            android:name=".complications.MessagesDataSource"
+            android:exported="true"
+            android:icon="@drawable/ic_hub"
+            android:label="@string/messages_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="SHORT_TEXT" />
+            <!-- Pushed by the phone (StateListenerService); no polling. -->
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0" />
+            <!-- The Sable face may use this source as its default without asking (see watchface.xml). -->
+            <meta-data
+                android:name="android.support.wearable.complications.SAFE_WATCH_FACES"
+                android:value="io.github.aimindseye.sablewatch.face" />
+        </service>
+
+        <service
+            android:name=".complications.WeatherDataSource"
+            android:exported="true"
+            android:icon="@drawable/ic_weather"
+            android:label="@string/weather_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="SHORT_TEXT" />
+            <!-- Pushed by the phone (StateListenerService); no polling. -->
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0" />
+            <!-- The Sable face may use this source as its default without asking (see watchface.xml). -->
+            <meta-data
+                android:name="android.support.wearable.complications.SAFE_WATCH_FACES"
+                android:value="io.github.aimindseye.sablewatch.face" />
+        </service>
+
+        <!-- The phone's state over the Wear OS Data Layer. -->
+        <service
+            android:name=".sync.StateListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/sablewatch"
+                    android:scheme="wear" />
+            </intent-filter>
         </service>
     </application>
 </manifest>

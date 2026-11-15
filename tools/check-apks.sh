@@ -20,18 +20,28 @@ aapt2="$(find "$sdk/build-tools" -maxdepth 2 \( -name aapt2 -o -name aapt2.exe \
 apksigner="$(dirname "$aapt2")/apksigner"
 [[ -e "$apksigner" ]] || apksigner="$apksigner.bat"
 
-# name|glob|package|allowed extra permission
+# The phone app's permissions, and why:
+#   READ_CALENDAR      Agenda Peek from the phone's calendars (asked for on the Agenda screen)
+#   INTERNET           Open-Meteo weather for the city the user picks
+#   WAKE_LOCK, ACCESS_NETWORK_STATE, RECEIVE_BOOT_COMPLETED
+#                      WorkManager: run the sync and keep it scheduled after a reboot
+#   (generic) io.github.aimindseye.tenseven.permission.READ_HUB_COUNTS
+#                      TenSeven Launcher's Hub counts; a signature permission, granted only
+#                      when both apps are signed with the same key
+phone_perms="android.permission.READ_CALENDAR android.permission.INTERNET android.permission.WAKE_LOCK android.permission.ACCESS_NETWORK_STATE android.permission.RECEIVE_BOOT_COMPLETED"
+
+# name|glob|package|allowed permissions (space separated)
 apps=(
     "watchface|watchface/build/outputs/apk/release/*.apk sable-watchface-*.apk|io.github.aimindseye.sablewatch.face|"
     "watch|watch/build/outputs/apk/release/*.apk sable-watch-wear-*.apk|io.github.aimindseye.sablewatch|"
-    "phone-sable|phone/build/outputs/apk/sable/release/*.apk sable-watch-phone-sable-*.apk|io.github.aimindseye.sablewatch|"
-    "phone-generic|phone/build/outputs/apk/generic/release/*.apk sable-watch-phone-generic-*.apk|io.github.aimindseye.sablewatch|"
+    "phone-sable|phone/build/outputs/apk/sable/release/*.apk sable-watch-phone-sable-*.apk|io.github.aimindseye.sablewatch|$phone_perms"
+    "phone-generic|phone/build/outputs/apk/generic/release/*.apk sable-watch-phone-generic-*.apk|io.github.aimindseye.sablewatch|$phone_perms io.github.aimindseye.tenseven.permission.READ_HUB_COUNTS"
 )
 certs=()
 fail=0
 cd "$root"
 for app in "${apps[@]}"; do
-    IFS='|' read -r name globs want _ <<< "$app"
+    IFS='|' read -r name globs want allowed <<< "$app"
     apks=()
     for g in $globs; do for f in $g; do [[ -f "$f" ]] && apks+=("$f"); done; done
     if [[ "${#apks[@]}" != 1 ]]; then
@@ -42,8 +52,9 @@ for app in "${apps[@]}"; do
     [[ "$package" == "$want" ]] || { echo "FAIL $name: package $package, expected $want"; fail=1; }
     # AndroidX adds <package>.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION, the app's own signature
     # permission for its private receivers; it grants nothing. Any other permission must be
-    # added here on purpose, with the reason.
+    # listed above on purpose, with the reason.
     others="$(grep "^uses-permission" <<< "$badging" | grep -v "name='$want.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'" || true)"
+    for p in $allowed; do others="$(grep -v "name='$p'" <<< "$others" || true)"; done
     [[ -z "$others" ]] || { echo "FAIL $name asks for permissions:"; echo "$others"; fail=1; }
     if [[ "$name" == watchface ]] && "$aapt2" dump xmltree --file AndroidManifest.xml "${apks[0]}" | grep -q 'hasCode.*=(type 0x12)0xffffffff'; then
         echo "FAIL watchface: a Watch Face Format face must have hasCode=false"; fail=1

@@ -16,10 +16,15 @@ FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
 # id, name, centre x, centre y, radius, supported types, default provider, default type
+# The Sable Watch data sources, fed from the phone. A slot uses its Sable source when the watch
+# app is installed, and falls back to the system provider when it is not.
+SABLE = "io.github.aimindseye.sablewatch/io.github.aimindseye.sablewatch.complications."
+
 SLOTS = [
     (1, "messages", 78, 262, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
-     "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT"),
-    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "EMPTY"),
+     "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
+    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "EMPTY",
+     SABLE + "WeatherDataSource"),
     (3, "heart_rate", 362, 280, 30, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "EMPTY"),
     (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
@@ -72,13 +77,19 @@ def icon(d, size, y, indent):
     )
 
 
-def slot(sid, name, cx, cy, r, types, provider, ptype):
+def policy(provider, ptype, primary=None, primary_type="SHORT_TEXT"):
+    sable = f' primaryProvider="{primary}" primaryProviderType="{primary_type}"' if primary else ""
+    return (f'      <DefaultProviderPolicy defaultSystemProvider="{provider}" '
+            f'defaultSystemProviderType="{ptype}"{sable}/>\n')
+
+
+def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
     d = 2 * r
     i = "      "
     out = [
         f'    <ComplicationSlot slotId="{sid}" name="{name}" displayName="slot_{name}" '
         f'x="{cx - r}" y="{cy - r}" width="{d}" height="{d}" supportedTypes="{types}" isCustomizable="TRUE">\n',
-        f'      <DefaultProviderPolicy defaultSystemProvider="{provider}" defaultSystemProviderType="{ptype}"/>\n',
+        policy(provider, ptype, primary),
         f'      <BoundingOval x="0" y="0" width="{d}" height="{d}"/>\n',
     ]
     isz = max(18, r // 2 + 4)
@@ -127,13 +138,13 @@ def slot(sid, name, cx, cy, r, types, provider, ptype):
 
 
 def top_arc():
-    # Agenda Peek (system "next event") by default; the user can pick Sable World Clock
-    # or any other long-text source for this slot in the watch's face editor.
+    # Sable Agenda Peek by default (the system "next event" without the watch app); the user
+    # can pick Sable World Clock or any other long-text source in the watch's face editor.
     arc = 'centerX="225" centerY="225" width="330" height="330" startAngle="-68" endAngle="68"'
     body = (
         '    <ComplicationSlot slotId="0" name="top_arc" displayName="slot_top_arc" x="0" y="0" '
         'width="450" height="450" supportedTypes="LONG_TEXT SHORT_TEXT" isCustomizable="TRUE">\n'
-        '      <DefaultProviderPolicy defaultSystemProvider="NEXT_EVENT" defaultSystemProviderType="LONG_TEXT"/>\n'
+        + policy("NEXT_EVENT", "LONG_TEXT", SABLE + "AgendaPeekDataSource", "LONG_TEXT") +
         '      <BoundingArc centerX="225" centerY="225" width="350" height="350" thickness="40" '
         'startAngle="-68" endAngle="68" isRoundEdge="TRUE"/>\n'
     )
