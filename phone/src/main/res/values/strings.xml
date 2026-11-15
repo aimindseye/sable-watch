@@ -2,13 +2,64 @@
 <resources>
     <string name="app_name">Sable Watch</string>
     <string name="title">watch</string>
-    <string name="not_connected">No watch connected yet</string>
     <string name="section_face">Watch face</string>
     <string name="section_cities">World clock cities</string>
-    <string name="section_agenda">Agenda source</string>
-    <string name="section_messages">Messages &amp; notifications</string>
+    <string name="section_agenda">Agenda</string>
+    <string name="section_messages">Messages</string>
+    <string name="section_weather">Weather</string>
     <string name="section_health">Health &amp; sensors</string>
     <string name="section_connection">Connection</string>
-    <string name="coming_next">coming next</string>
-    <string name="hint">↑↓ move · Enter open · 1–6 jump</string>
+    <string name="hint">↑↓ move · Enter open · 1–7 jump · S sync</string>
+    <string name="hint_section">↑↓ move · Enter change · Esc back · S sync</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="remove">remove</string>
+
+    <string name="not_synced">Not synced yet</string>
+    <string name="not_connected">No watch connected</string>
+    <string name="no_data_layer">Can\'t reach Wear OS: Google Play services with the Wearable API is needed</string>
+    <plurals name="watches_connected">
+        <item quantity="one">%d watch connected</item>
+        <item quantity="other">%d watches connected</item>
+    </plurals>
+    <string name="never_synced">never synced</string>
+    <string name="last_sync">synced %s</string>
+
+    <string name="face_detail">on the watch</string>
+    <string name="face_help">The face is chosen on the watch: long-press the current face, swipe to Sable, and tap it. To switch the top arc between Agenda Peek and World Clock, tap Edit on the face and pick the top slot.</string>
+    <string name="health_detail">stays on the watch</string>
+    <string name="health_help">Steps, heart rate and battery come from the watch itself. The phone never receives or stores them.</string>
+
+    <string name="cities_help">The arc fits up to %d. Enter removes a city.</string>
+    <string name="cities_search">Type a city or code (LDN, Tokyo…)</string>
+
+    <string name="no_event">No upcoming event</string>
+    <string name="no_calendar">Calendar access is off</string>
+    <string name="calendar_allow">Allow calendar access</string>
+    <string name="calendar_allow_detail">for Agenda Peek</string>
+    <string name="agenda_window">Look ahead</string>
+    <plurals name="agenda_window_value">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <string name="agenda_hide_titles">Show every event as Busy</string>
+    <string name="agenda_skip_all_day">Skip all-day events</string>
+
+    <string name="unread_hub">Hub unread: %d</string>
+    <string name="unread_notifications">Unread notifications: %d</string>
+    <string name="unread_none">No message count</string>
+    <string name="messages_help_sable">The count comes from Sable Hub, so it follows Hub\'s read, snooze and privacy settings. Notification access makes the watch update as soon as a message arrives.</string>
+    <string name="messages_help_generic">The count comes from TenSeven Launcher\'s Hub when it is installed with the same signing key. Notification access makes the watch update as soon as a message arrives, and gives a plain count without TenSeven. Only counts leave the phone.</string>
+    <string name="notification_access">Notification access</string>
+
+    <string name="weather_line">%1$s %2$d°%3$s %4$s</string>
+    <string name="weather_none">No weather</string>
+    <string name="weather_help_sable">Sable Weather is used when it answers. The city below is the fallback, from Open-Meteo.</string>
+    <string name="weather_help_generic">Weather comes from Open-Meteo for the city you pick. Only the city\'s coordinates are sent, never the phone\'s location.</string>
+    <string name="weather_search">Search a city</string>
+    <string name="weather_unit">Unit</string>
+
+    <string name="sync_now">Sync now</string>
+    <string name="sync_now_key">S</string>
+    <string name="connection_help">The phone sends the watch only what the face shows: cities, the next event, a message count and the weather. It sends again when one of them changes, and every 15 minutes.</string>
 </resources>

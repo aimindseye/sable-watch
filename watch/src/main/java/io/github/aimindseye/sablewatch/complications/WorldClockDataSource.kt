@@ -11,11 +11,15 @@ import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingTimelineComplicationDataSourceService
 import androidx.wear.watchface.complications.datasource.TimeInterval
 import androidx.wear.watchface.complications.datasource.TimelineEntry
+import io.github.aimindseye.sablewatch.R
+import io.github.aimindseye.sablewatch.shared.WorldClock
+import io.github.aimindseye.sablewatch.sync.StateStore
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * "Sable World Clock": up to three cities' times for the top arc of the Sable face.
+ * "Sable World Clock": up to three cities' times for the top arc of the Sable face. The cities are
+ * the ones chosen in the phone app (London, New York and Tokyo until then).
  *
  * A complication can't be refreshed every minute, so each update sends a timeline with one entry
  * per minute for the next hour; Wear OS switches entries on time. The service asks for a new
@@ -41,17 +45,19 @@ class WorldClockDataSource : SuspendingTimelineComplicationDataSourceService() {
     }
 
     private fun build(type: ComplicationType, at: Instant, use24Hour: Boolean): ComplicationData? {
-        val cities = WorldClock.DEFAULT_CITIES
-        val description = PlainComplicationText.Builder(getString(io.github.aimindseye.sablewatch.R.string.world_clock_label)).build()
+        val cities = StateStore(this).load().cities
+        val description = PlainComplicationText.Builder(getString(R.string.world_clock_label)).build()
         return when (type) {
             ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(
                 PlainComplicationText.Builder(WorldClock.line(cities, at, use24Hour)).build(),
-                description,
+                description
             ).build()
+
             ComplicationType.SHORT_TEXT -> ShortTextComplicationData.Builder(
                 PlainComplicationText.Builder(WorldClock.short(cities, at, use24Hour)).build(),
-                description,
+                description
             ).build()
+
             else -> null
         }
     }

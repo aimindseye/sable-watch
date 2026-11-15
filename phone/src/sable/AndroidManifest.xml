@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The SableOS providers. Each one checks the caller itself (SableOS patch 0222 allows Sable Watch). -->
+    <queries>
+        <provider android:authorities="org.sableos.hub.snapshot" />
+        <provider android:authorities="org.sableos.calendar.snapshot" />
+        <provider android:authorities="org.sableos.weather.snapshot" />
+    </queries>
+</manifest>

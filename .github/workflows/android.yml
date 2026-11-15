@@ -62,9 +62,9 @@ jobs:
         run: >-
           ./gradlew --no-daemon --console=plain --continue
           assembleRelease
-          :watch:testDebugUnitTest :phone:testSableDebugUnitTest
-          :watch:lintDebug :phone:lintSableDebug :phone:lintGenericDebug :watchface:lintDebug
-          :watch:detekt :phone:detekt :watch:ktlintCheck :phone:ktlintCheck
+          :shared:testDebugUnitTest :watch:testDebugUnitTest :phone:testSableDebugUnitTest :phone:testGenericDebugUnitTest
+          :shared:lintDebug :watch:lintDebug :phone:lintSableDebug :phone:lintGenericDebug :watchface:lintDebug
+          :shared:detekt :watch:detekt :phone:detekt :shared:ktlintCheck :watch:ktlintCheck :phone:ktlintCheck
       - name: Each APK has its package name and only the permissions it should
         run: bash tools/check-apks.sh .
       - name: Upload APKs

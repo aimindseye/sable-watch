@@ -21,3 +21,5 @@ include(":watchface")
 include(":watch")
 // The phone companion, built as `sable` (SableOS) and `generic` (any Android phone).
 include(":phone")
+// What the phone sends the watch: the data contract both apps share, and its formatting.
+include(":shared")

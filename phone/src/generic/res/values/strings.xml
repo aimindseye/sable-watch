@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="platform_line">Works on any Android phone: uses the phone\'s calendar and notifications</string>
+    <string name="platform_line">Any Android phone: TenSeven Hub counts, phone calendars, Open-Meteo weather</string>
 </resources>

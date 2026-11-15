@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">Sable Watch</string>
     <string name="world_clock_label">Sable World Clock</string>
+    <string name="agenda_label">Sable Agenda Peek</string>
+    <string name="messages_label">Sable Hub</string>
+    <string name="messages_description">%1$d unread in Hub</string>
+    <string name="weather_label">Sable Weather</string>
 </resources>

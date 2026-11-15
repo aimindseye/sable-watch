@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="platform_line">SableOS build: reads Sable Calendar, Sable Weather and Hub</string>
+    <string name="platform_line">SableOS: Sable Hub, Sable Calendar and Sable Weather</string>
 </resources>

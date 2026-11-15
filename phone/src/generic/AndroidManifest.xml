@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- TenSeven Launcher's Hub counts: a signature permission, so only apps signed with the TenSeven key get it. -->
+    <uses-permission android:name="io.github.aimindseye.tenseven.permission.READ_HUB_COUNTS" />
+    <queries>
+        <provider android:authorities="io.github.aimindseye.tenseven.hubcounts" />
+    </queries>
+</manifest>
