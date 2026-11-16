@@ -3,6 +3,13 @@
    <configuration>
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
+      <!-- Android Studio downloads sources and docs for the editor (Gradle's own src zip, -sources and
+           -javadoc jars). They are never on a build classpath, so they are trusted without a checksum. -->
+      <trusted-artifacts>
+         <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
+         <trust file=".*-sources[.]jar" regex="true"/>
+         <trust file=".*-javadoc[.]jar" regex="true"/>
+      </trusted-artifacts>
    </configuration>
    <components>
       <component group="androidx.activity" name="activity" version="1.0.0">
