@@ -32,14 +32,16 @@ COMPLICATION_END = "      </Complication>\n"
 SABLE = "io.github.aimindseye.sablewatch/io.github.aimindseye.sablewatch.complications."
 
 SLOTS = [
-    (1, "messages", 78, 262, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
+    # Layout C ("Rows"): Hub, weather and heart rate in a row under the date, battery and steps
+    # centred below them.
+    (1, "messages", 135, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
-    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
+    (2, "weather", 225, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 358, 286, 42, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
-    (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
+    (3, "heart_rate", 315, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
+    (4, "battery", 178, 360, 36, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
-    (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
+    (5, "steps", 272, 360, 36, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "STEP_COUNT", "SHORT_TEXT"),
 ]
 
@@ -225,17 +227,17 @@ def main():
          '        <Stroke color="#FF333333" thickness="1"/>\n      </Ellipse>\n'
          '      <Variant mode="AMBIENT" target="alpha" value="255"/>\n    </PartDraw>\n',
          # Time and date sit high, just under the top arc, leaving the lower half to the bubbles.
-         '    <DigitalClock x="75" y="128" width="300" height="90">\n'
+         '    <DigitalClock x="75" y="96" width="300" height="90">\n'
          '      <TimeText format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" x="0" y="0" width="300" height="90">\n'
          f'        <Font family="{FONT}" size="74" color="{WHITE}" weight="LIGHT"/>\n'
          '      </TimeText>\n    </DigitalClock>\n',
          # "MON," in white and "NOV 9" in cyan, as in the BB10 design.
-         '    <PartText x="100" y="216" width="120" height="32">\n'
+         '    <PartText x="100" y="184" width="120" height="32">\n'
          '      <Text align="END">\n'
          f'        <Font family="{FONT}" size="23" color="{WHITE}">'
          '<Upper><Template>%s,<Parameter expression="[DAY_OF_WEEK_S]"/></Template></Upper></Font>\n'
          '      </Text>\n    </PartText>\n',
-         '    <PartText x="228" y="216" width="130" height="32">\n'
+         '    <PartText x="228" y="184" width="130" height="32">\n'
          '      <Variant mode="AMBIENT" target="alpha" value="200"/>\n'
          '      <Text align="START">\n'
          f'        <Font family="{FONT}" size="23" color="{ACCENT}">'
