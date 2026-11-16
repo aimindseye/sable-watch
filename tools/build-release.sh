@@ -46,6 +46,8 @@ rm -f "$out"/*.idsig
 
 bash tools/check-apks.sh --signed "$out"
 git rev-parse HEAD > "$out/SOURCE_COMMIT.txt"
-(cd "$out" && sha256sum ./*.apk > SHA256SUMS.txt)
+# sha256sum on Linux and Git Bash; shasum -a 256 (same output) on macOS.
+if command -v sha256sum >/dev/null; then sum=(sha256sum); else sum=(shasum -a 256); fi
+(cd "$out" && "${sum[@]}" ./*.apk > SHA256SUMS.txt)
 printf 'Signed APKs and SHA256SUMS.txt: %s\nSource commit: %s\n' "$out" "$(git rev-parse HEAD)"
 echo "Publish with: gh release create v$version \"$out\"/*.apk \"$out\"/SHA256SUMS.txt --title \"Sable Watch $version\" --generate-notes"
