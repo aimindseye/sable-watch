@@ -21,8 +21,11 @@ WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
 TRACK_ALPHA = 90  # of 255: under a range (battery, steps), the unfilled part of the ring
-# Per-slot text size, where the slot's usual source sends long words ("Heart rate" before a reading).
-TEXT_SIZE = {"heart_rate": 15}
+# Icons that keep their own colour instead of the accent.
+ICON_TINT = {"heart_rate": "#FFFF4057"}
+# Slots whose value is a number: anything longer than three characters (Samsung's heart-rate
+# source sends "Heart rate" before it has a reading) or empty shows as 0.
+NUMERIC = {"heart_rate"}
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -52,11 +55,12 @@ def ambient_hide(indent):
 
 def text(x, y, w, h, size, color, expr, indent, weight="NORMAL", ambient=None):
     amb = "" if ambient is None else ambient
+    body = f'%s<Parameter expression="{expr}"/>'
     return (
         f'{indent}<PartText x="{x}" y="{y}" width="{w}" height="{h}">\n{amb}'
         f'{indent}  <Text align="CENTER" ellipsis="TRUE">\n'
         f'{indent}    <Font family="{FONT}" size="{size}" color="{color}" weight="{weight}">'
-        f'<Template>%s<Parameter expression="{expr}"/></Template></Font>\n'
+        f'<Template>{body}</Template></Font>\n'
         f'{indent}  </Text>\n{indent}</PartText>\n'
     )
 
@@ -87,10 +91,10 @@ def bubble(d, indent, ring_alpha=255):
     )
 
 
-def icon(d, size, y, indent):
+def icon(d, size, y, indent, tint=ACCENT):
     x = (d - size) // 2
     return (
-        f'{indent}<PartImage x="{x}" y="{y}" width="{size}" height="{size}" tintColor="{ACCENT}">\n'
+        f'{indent}<PartImage x="{x}" y="{y}" width="{size}" height="{size}" tintColor="{tint}">\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="170"/>\n'
         f'{indent}  <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>\n'
         f'{indent}</PartImage>\n'
@@ -116,8 +120,30 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
         f'      <BoundingOval x="0" y="0" width="{d}" height="{d}"/>\n',
     ]
     isz = max(18, r // 2 + 4)
-    tsz = TEXT_SIZE.get(name, 20 if r >= 36 else 17)
+    tsz = 20 if r >= 36 else 17
     j = i + "  "
+    tint = ICON_TINT.get(name, ACCENT)
+
+    def value(ambient=None):
+        args = (4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE)
+        shown = text(*args, "[COMPLICATION.TEXT]", j, ambient=ambient)
+        if name not in NUMERIC:
+            return shown
+        k = j + "    "
+        return (
+            f'{j}<Condition>\n'
+            f'{j}  <Expressions>\n'
+            f'{j}    <Expression name="no_reading">'
+            f'textLength([COMPLICATION.TEXT]) &gt; 3 || textLength([COMPLICATION.TEXT]) == 0</Expression>\n'
+            f'{j}  </Expressions>\n'
+            f'{j}  <Compare expression="no_reading">\n'
+            + text(*args, "0", k, ambient=ambient) +
+            f'{j}  </Compare>\n'
+            f'{j}  <Default>\n'
+            + text(*args, "[COMPLICATION.TEXT]", k, ambient=ambient) +
+            f'{j}  </Default>\n'
+            f'{j}</Condition>\n'
+        )
 
     def complication(ctype, *parts):
         ring = TRACK_ALPHA if ctype == "RANGED_VALUE" else 255
@@ -126,12 +152,11 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
     # SHORT_TEXT: icon on top, value below (the BB10 bubbles).
     complication(
         "SHORT_TEXT",
-        icon(d, isz, int(r * 0.30), j),
-        text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", j,
-             ambient=f'{i}    <Variant mode="AMBIENT" target="alpha" value="200"/>\n'),
+        icon(d, isz, int(r * 0.30), j, tint),
+        value(ambient=f'{i}    <Variant mode="AMBIENT" target="alpha" value="200"/>\n'),
     )
     # MONOCHROMATIC_IMAGE: icon only.
-    complication("MONOCHROMATIC_IMAGE", icon(d, int(d * 0.55), int(d * 0.225), j))
+    complication("MONOCHROMATIC_IMAGE", icon(d, int(d * 0.55), int(d * 0.225), j, tint))
     if "SMALL_IMAGE" in types:
         s = int(d * 0.6)
         complication(
@@ -152,8 +177,8 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
             f'{i}    </Arc>\n'
             f'{i}    <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
             f'{i}  </PartDraw>\n',
-            icon(d, isz, int(r * 0.30), j),
-            text(4, int(r * 0.30) + isz, d - 8, tsz + 8, tsz, WHITE, "[COMPLICATION.TEXT]", j),
+            icon(d, isz, int(r * 0.30), j, tint),
+            value(),
         )
     out.append('    </ComplicationSlot>\n')
     return "".join(out)
