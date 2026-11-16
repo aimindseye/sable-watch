@@ -10,10 +10,12 @@ work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
 m=https://repo1.maven.org/maven2
+# sha256sum on Linux and Git Bash; shasum -a 256 (same check mode) on macOS.
+if command -v sha256sum >/dev/null; then sum=(sha256sum); else sum=(shasum -a 256); fi
 fetch() {
     local url="$1" name="$2" sha="$3"
     curl --proto '=https' --tlsv1.2 -sSfL -o "$work/$name" "$url"
-    echo "$sha  $work/$name" | sha256sum -c --quiet -
+    echo "$sha  $work/$name" | "${sum[@]}" -c --quiet -
 }
 fetch "$m/org/exist-db/thirdparty/xerces/xercesImpl/2.12.2/xercesImpl-2.12.2-xml-schema-1.1.jar" xerces.jar \
     "368776ba019267ee0b3c78a729441e5f808fee3286ddd6968303d25d18139cde"

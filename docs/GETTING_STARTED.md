@@ -1,6 +1,6 @@
-# Getting started on Windows
+# Getting started on Windows or a Mac
 
-This gets the face onto the Wear OS emulator, then onto a Galaxy Watch 7.
+This gets the face onto the Wear OS emulator, then onto a Galaxy Watch 7. The steps are written for Windows; [On a Mac](#on-a-mac) lists what differs.
 
 ## Why the old project didn't run
 
@@ -52,3 +52,14 @@ Wireless debugging turns itself off when the watch sleeps for a while; repeat `a
 ## 6. The phone app
 
 Pick **Build > Select Build Variant**, choose `sableDebug` (SableOS) or `genericDebug` (any phone), then run **Phone app** on the phone.
+
+## On a Mac
+
+Everything above works the same in Android Studio for macOS, with these differences:
+
+- **Install**: Android Studio for your chip (Apple silicon or Intel). Skip the Windows Hypervisor and Git Bash steps; macOS has Git (it offers the Command Line Tools on first use) and the scripts run in Terminal.
+- **Clone** anywhere, for example `~/dev/sable-watch`. Android Studio writes `local.properties` with your Mac SDK path (`~/Library/Android/sdk`); it stays out of Git, so the same clone never carries Mac paths to Windows.
+- **Gradle JDK**: Android Studio's bundled JDK works (the build targets Java 17 bytecode). If sync asks, pick JDK 17 or the bundled one.
+- **Emulator image**: on Apple silicon choose the **arm64-v8a** Wear OS image (API 34+), not x86_64.
+- **adb** for the watch over Wi-Fi: `~/Library/Android/sdk/platform-tools/adb pair …`, or add `platform-tools` to your `PATH`.
+- **Signing a release**: `export ANDROID_HOME=~/Library/Android/sdk` first, then follow [RELEASING.md](RELEASING.md). The scripts run with macOS's own bash 3.2 and use `shasum -a 256` where Linux has `sha256sum`; `tools/validate-watchface.sh` also needs `javac` on the `PATH` (Android Studio's: `export PATH="/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin:$PATH"`).

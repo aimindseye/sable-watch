@@ -66,7 +66,9 @@ for app in "${apps[@]}"; do
     echo "checked $name: $package"
 done
 if [[ "$signed" == yes && "$fail" == 0 ]]; then
-    mapfile -t distinct < <(printf '%s\n' "${certs[@]}" | sort -u)
+    # A read loop rather than mapfile, which macOS's bash 3.2 lacks.
+    distinct=()
+    while IFS= read -r c; do distinct+=("$c"); done < <(printf '%s\n' "${certs[@]}" | sort -u)
     if [[ "${#distinct[@]}" != 1 ]]; then echo "FAIL the APKs are signed with ${#distinct[@]} different keys"; fail=1
     elif [[ "${distinct[0]}" != "$expected_cert" ]]; then
         echo "FAIL the APKs are signed with ${distinct[0]}, not the registered certificate $expected_cert"; fail=1

@@ -8,7 +8,7 @@ Sable Watch uses the same key as TenSeven Launcher and Sable Games, whose certif
 
 The watch app and the phone app **must** be signed with the same key: the Wear OS Data Layer only connects apps whose package name and signing certificate match. A new key makes the apps new apps: watches and phones can't update from the old ones.
 
-Tell the script where the key is, in Git Bash:
+Tell the script where the key is, in Git Bash (or Terminal on a Mac):
 
 ```bash
 export SABLEWATCH_KEYSTORE=/c/Users/you/keys/tenseven-release.jks
@@ -20,7 +20,7 @@ These are a path and a name, not secrets. The script asks for the keystore passw
 ## Making a release
 
 1. Raise `versionCode` and `versionName` in `watchface/`, `watch/` and `phone/build.gradle.kts` (keep the three in step), merge to `main` and pull it.
-2. In Git Bash: `bash tools/build-release.sh`. With clean sources it runs the unit tests and the face schema check, builds the four release APKs, signs them with `apksigner` after one password prompt, checks every package name, permission and the signing certificate (`tools/check-apks.sh --signed`), and writes the APKs, `SHA256SUMS.txt` and `SOURCE_COMMIT.txt` to `~/Downloads/sable-watch-release/<version>/` (`SABLEWATCH_RELEASE_DIR` overrides it).
+2. In Git Bash (or Terminal on a Mac): `bash tools/build-release.sh`. With clean sources it runs the unit tests and the face schema check, builds the four release APKs, signs them with `apksigner` after one password prompt, checks every package name, permission and the signing certificate (`tools/check-apks.sh --signed`), and writes the APKs, `SHA256SUMS.txt` and `SOURCE_COMMIT.txt` to `~/Downloads/sable-watch-release/<version>/` (`SABLEWATCH_RELEASE_DIR` overrides it).
 3. Install the face and the watch app on the watch and the phone app on the phone, and check them.
 4. Publish: the script prints the `gh release create` command, which tags `v<version>` and uploads the APKs and `SHA256SUMS.txt`.
 
