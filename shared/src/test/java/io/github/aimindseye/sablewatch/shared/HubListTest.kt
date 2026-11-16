@@ -17,11 +17,12 @@ class HubListTest {
     }
 
     @Test
-    fun `keeps at most the newest twenty`() {
-        val items = (1..30).map { item("$it", it.toLong()) }
+    fun `keeps at most the newest MAX_ITEMS`() {
+        val total = HubList.MAX_ITEMS + 10
+        val items = (1..total).map { item("$it", it.toLong()) }
         val back = HubList.decode(HubList.encode(items))
         assertEquals(HubList.MAX_ITEMS, back.size)
-        assertEquals("30", back.first().id)
+        assertEquals("$total", back.first().id)
     }
 
     @Test

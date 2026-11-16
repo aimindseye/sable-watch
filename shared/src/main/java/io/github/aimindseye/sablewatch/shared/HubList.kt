@@ -23,7 +23,7 @@ object HubList {
     const val KEY_ITEMS = "items"
     const val KEY_UPDATED_AT = "updated_at"
 
-    const val MAX_ITEMS = 20
+    const val MAX_ITEMS = 50
     const val MAX_PREVIEW = 120
     private const val MAX_NAME = 40
     private const val FIELD = '\u001F'

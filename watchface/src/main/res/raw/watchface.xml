@@ -84,7 +84,9 @@
         <PartDraw x="0" y="0" width="76" height="76">
           <Ellipse x="1" y="1" width="74" height="74">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="72" height="72">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -109,7 +111,9 @@
         <PartDraw x="0" y="0" width="76" height="76">
           <Ellipse x="1" y="1" width="74" height="74">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="72" height="72">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -128,7 +132,9 @@
         <PartDraw x="0" y="0" width="76" height="76">
           <Ellipse x="1" y="1" width="74" height="74">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="72" height="72">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -150,7 +156,9 @@
         <PartDraw x="0" y="0" width="72" height="72">
           <Ellipse x="1" y="1" width="70" height="70">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="68" height="68">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -175,7 +183,9 @@
         <PartDraw x="0" y="0" width="72" height="72">
           <Ellipse x="1" y="1" width="70" height="70">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="68" height="68">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -194,7 +204,9 @@
         <PartDraw x="0" y="0" width="72" height="72">
           <Ellipse x="1" y="1" width="70" height="70">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="68" height="68">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -216,7 +228,9 @@
         <PartDraw x="0" y="0" width="60" height="60">
           <Ellipse x="1" y="1" width="58" height="58">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="56" height="56">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -241,7 +255,9 @@
         <PartDraw x="0" y="0" width="60" height="60">
           <Ellipse x="1" y="1" width="58" height="58">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="56" height="56">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -260,7 +276,9 @@
         <PartDraw x="0" y="0" width="60" height="60">
           <Ellipse x="1" y="1" width="58" height="58">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="56" height="56">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -271,9 +289,6 @@
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
         <PartDraw x="0" y="0" width="60" height="60">
-          <Ellipse x="2" y="2" width="56" height="56">
-            <Stroke color="#FF1A2A33" thickness="4"/>
-          </Ellipse>
           <Arc centerX="30" centerY="30" width="56" height="56" startAngle="0" endAngle="360">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
@@ -298,7 +313,9 @@
         <PartDraw x="0" y="0" width="68" height="68">
           <Ellipse x="1" y="1" width="66" height="66">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="64" height="64">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -323,7 +340,9 @@
         <PartDraw x="0" y="0" width="68" height="68">
           <Ellipse x="1" y="1" width="66" height="66">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="64" height="64">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -342,7 +361,9 @@
         <PartDraw x="0" y="0" width="68" height="68">
           <Ellipse x="1" y="1" width="66" height="66">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="64" height="64">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -353,9 +374,6 @@
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
         <PartDraw x="0" y="0" width="68" height="68">
-          <Ellipse x="2" y="2" width="64" height="64">
-            <Stroke color="#FF1A2A33" thickness="4"/>
-          </Ellipse>
           <Arc centerX="34" centerY="34" width="64" height="64" startAngle="0" endAngle="360">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
@@ -380,7 +398,9 @@
         <PartDraw x="0" y="0" width="84" height="84">
           <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="80" height="80">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -405,7 +425,9 @@
         <PartDraw x="0" y="0" width="84" height="84">
           <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="80" height="80">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -424,7 +446,9 @@
         <PartDraw x="0" y="0" width="84" height="84">
           <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
-            <Stroke color="#FF1D2A31" thickness="1.5"/>
+          </Ellipse>
+          <Ellipse x="2" y="2" width="80" height="80">
+            <Stroke color="#FF2B4552" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
@@ -435,9 +459,6 @@
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
         <PartDraw x="0" y="0" width="84" height="84">
-          <Ellipse x="2" y="2" width="80" height="80">
-            <Stroke color="#FF1A2A33" thickness="4"/>
-          </Ellipse>
           <Arc centerX="42" centerY="42" width="80" height="80" startAngle="0" endAngle="360">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>

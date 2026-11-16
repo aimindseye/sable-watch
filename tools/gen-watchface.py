@@ -20,8 +20,7 @@ ACCENTS = [  # id, label resource, colour
 WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
-BUBBLE_EDGE = "#FF1D2A31"
-TRACK = "#FF1A2A33"
+TRACK = "#FF2B4552"
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -63,7 +62,10 @@ def bubble(d, indent):
         f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}">\n'
         f'{indent}  <Ellipse x="1" y="1" width="{d - 2}" height="{d - 2}">\n'
         f'{indent}    <Fill color="{BUBBLE}"/>\n'
-        f'{indent}    <Stroke color="{BUBBLE_EDGE}" thickness="1.5"/>\n'
+        f'{indent}  </Ellipse>\n'
+        # The same thick ring on every bubble; a range (battery, steps) fills it in the accent.
+        f'{indent}  <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
+        f'{indent}    <Stroke color="{TRACK}" thickness="4"/>\n'
         f'{indent}  </Ellipse>\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
         f'{indent}</PartDraw>\n'
@@ -135,8 +137,6 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
         complication(
             "RANGED_VALUE",
             f'{i}  <PartDraw x="0" y="0" width="{d}" height="{d}">\n'
-            f'{i}    <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
-            f'{i}      <Stroke color="{TRACK}" thickness="4"/>\n{i}    </Ellipse>\n'
             f'{i}    <Arc centerX="{r}" centerY="{r}" width="{d - 4}" height="{d - 4}" startAngle="0" endAngle="360">\n'
             f'{i}      <Stroke color="{ACCENT}" thickness="4" cap="ROUND"/>\n'
             f'{i}      <Transform target="endAngle" value="360 * {frac}"/>\n'
