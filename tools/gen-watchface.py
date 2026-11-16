@@ -23,9 +23,9 @@ SABLE = "io.github.aimindseye.sablewatch/io.github.aimindseye.sablewatch.complic
 SLOTS = [
     (1, "messages", 78, 262, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
-    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "EMPTY",
+    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 362, 280, 30, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "EMPTY"),
+    (3, "heart_rate", 362, 280, 30, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
     (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
     (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
@@ -84,6 +84,9 @@ def policy(provider, ptype, primary=None, primary_type="SHORT_TEXT"):
 
 
 def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
+    # Wear OS rejects the whole face if a fallback type is not one the slot supports,
+    # even for the EMPTY provider.
+    assert ptype in types.split(), f"slot {name}: fallback type {ptype} not in {types}"
     d = 2 * r
     i = "      "
     out = [
