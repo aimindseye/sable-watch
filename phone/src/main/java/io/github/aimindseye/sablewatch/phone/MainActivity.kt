@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -28,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -47,7 +45,10 @@ import io.github.aimindseye.sablewatch.phone.sync.SyncWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** The companion: a home list and five sections, keyboard first like the other Sable apps. */
+/**
+ * The companion: a setup wizard on first run, then a home list and its sections. Every screen
+ * works by touch (back arrow and buttons) and by keyboard (Esc, Enter, number keys, S).
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +73,8 @@ private val NUMBER_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five
 @Composable
 private fun App() {
     val context = LocalContext.current
-    var screen by remember { mutableStateOf(Screen.HOME) }
+    val settings = remember { Settings(context) }
+    var setupDone by remember { mutableStateOf(settings.setupDone) }
     // Bumped on resume and after every change, so each screen re-reads what it shows.
     var version by remember { mutableIntStateOf(0) }
     LifecycleResumeEffect(Unit) {
@@ -83,28 +85,59 @@ private fun App() {
         version++
         SyncWorker.soon(context)
     }
-    BackHandler(enabled = screen != Screen.HOME) { screen = Screen.HOME }
+    val status = rememberStatus(version)
     Box(
         Modifier
             .fillMaxSize()
             .background(Color.Black)
             .systemBarsPadding()
+    ) {
+        if (setupDone) {
+            MainScreens(status, changed, refresh = { version++ }) {
+                settings.setupDone = false
+                setupDone = false
+            }
+        } else {
+            SetupWizard(status, changed, refresh = { version++ }) {
+                settings.setupDone = true
+                setupDone = true
+                SyncWorker.now(context)
+            }
+        }
+    }
+}
+
+/** The home list and its sections, once setup is done. */
+@Composable
+private fun MainScreens(status: Status?, changed: () -> Unit, refresh: () -> Unit, runSetup: () -> Unit) {
+    val context = LocalContext.current
+    var screen by remember { mutableStateOf(Screen.HOME) }
+    val home = screen == Screen.HOME
+    val back = { screen = Screen.HOME }
+    val sync = {
+        SyncWorker.now(context)
+        refresh()
+    }
+    BackHandler(enabled = !home, onBack = back)
+    Column(
+        Modifier
+            .fillMaxSize()
             .onPreviewKeyEvent { event ->
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 val jump = NUMBER_KEYS.indexOf(event.key)
                 when {
-                    event.key == Key.Escape && screen != Screen.HOME -> {
-                        screen = Screen.HOME
+                    event.key == Key.Escape && !home -> {
+                        back()
                         true
                     }
 
-                    jump >= 0 && screen == Screen.HOME -> {
+                    jump >= 0 && home -> {
                         screen = Screen.entries[jump + 1]
                         true
                     }
 
                     event.key == Key.S && screen !in TYPING_SCREENS -> {
-                        SyncWorker.now(context)
+                        sync()
                         true
                     }
 
@@ -112,36 +145,37 @@ private fun App() {
                 }
             }
     ) {
+        TopBar(stringResource(screen.title), onBack = if (home) null else back)
         Column(
             Modifier
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 48.dp)
+                .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
         ) {
-            Title(stringResource(screen.title).lowercase())
-            val status = rememberStatus(version)
             val first = remember(screen) { FocusRequester() }
             val focusFirst = Modifier.focusRequester(first)
             when (screen) {
-                Screen.HOME -> HomeScreen(status, focusFirst) { screen = it }
+                Screen.HOME -> HomeScreen(status, focusFirst, runSetup) { screen = it }
                 Screen.FACE -> Body(stringResource(R.string.face_help))
                 Screen.CITIES -> CitiesScreen(focusFirst, changed)
                 Screen.AGENDA -> AgendaScreen(status, focusFirst, changed)
                 Screen.MESSAGES -> MessagesScreen(status, focusFirst)
                 Screen.WEATHER -> WeatherScreen(status, focusFirst, changed)
                 Screen.HEALTH -> Body(stringResource(R.string.health_help))
-                Screen.CONNECTION -> ConnectionScreen(status, focusFirst) { version++ }
+                Screen.CONNECTION -> ConnectionScreen(status, focusFirst, refresh)
             }
             LaunchedEffect(screen) { runCatching { first.requestFocus() } }
         }
-        HintBar(
-            stringResource(if (screen == Screen.HOME) R.string.hint else R.string.hint_section),
-            Modifier.align(Alignment.BottomStart)
+        BottomBar(
+            middle = stringResource(if (home) R.string.hint else R.string.hint_section),
+            left = { if (!home) PillButton(stringResource(R.string.back), primary = false, onClick = back) },
+            right = { PillButton(stringResource(R.string.sync_now), primary = true, onClick = sync) }
         )
     }
 }
 
 @Composable
-private fun HomeScreen(status: Status?, modifier: Modifier, open: (Screen) -> Unit) {
+private fun HomeScreen(status: Status?, modifier: Modifier, runSetup: () -> Unit, open: (Screen) -> Unit) {
     Dim(status?.connection.orEmpty())
     Dim(stringResource(R.string.platform_line))
     Spacer(Modifier.height(10.dp))
@@ -161,10 +195,12 @@ private fun HomeScreen(status: Status?, modifier: Modifier, open: (Screen) -> Un
             modifier = if (i == 0) modifier else Modifier
         ) { open(s) }
     }
+    Spacer(Modifier.height(8.dp))
+    ActionRow(stringResource(R.string.setup_again), "", onClick = runSetup)
 }
 
 @Composable
-private fun AgendaScreen(status: Status?, modifier: Modifier, changed: () -> Unit) {
+internal fun AgendaScreen(status: Status?, modifier: Modifier, changed: () -> Unit) {
     val context = LocalContext.current
     val settings = remember { Settings(context) }
     val ask = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { changed() }
@@ -201,7 +237,7 @@ private fun AgendaScreen(status: Status?, modifier: Modifier, changed: () -> Uni
 }
 
 @Composable
-private fun MessagesScreen(status: Status?, modifier: Modifier) {
+internal fun MessagesScreen(status: Status?, modifier: Modifier) {
     val context = LocalContext.current
     Dim(status?.messages.orEmpty())
     Spacer(Modifier.height(8.dp))
@@ -216,7 +252,7 @@ private fun MessagesScreen(status: Status?, modifier: Modifier) {
 }
 
 @Composable
-private fun ConnectionScreen(status: Status?, modifier: Modifier, refresh: () -> Unit) {
+internal fun ConnectionScreen(status: Status?, modifier: Modifier, refresh: () -> Unit) {
     val context = LocalContext.current
     Dim(status?.connection.orEmpty())
     Dim(status?.lastSync.orEmpty())
@@ -232,7 +268,7 @@ private val TYPING_SCREENS = setOf(Screen.CITIES, Screen.WEATHER)
 
 /** The status lines, read off the main thread; null until the first read finishes. */
 @Composable
-private fun rememberStatus(version: Int): Status? {
+internal fun rememberStatus(version: Int): Status? {
     val context = LocalContext.current
     val status by produceState<Status?>(null, version) {
         value = withContext(Dispatchers.IO) { Status.read(context) }
