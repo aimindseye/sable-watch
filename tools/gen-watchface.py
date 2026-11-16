@@ -20,7 +20,7 @@ ACCENTS = [  # id, label resource, colour
 WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
-TRACK = "#FF2B4552"
+RING_ALPHA = 90  # of 255: the resting ring, dimmer than a range's fill
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -34,7 +34,7 @@ SLOTS = [
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
     (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 362, 280, 30, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
+    (3, "heart_rate", 360, 284, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
     (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
     (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
@@ -63,9 +63,13 @@ def bubble(d, indent):
         f'{indent}  <Ellipse x="1" y="1" width="{d - 2}" height="{d - 2}">\n'
         f'{indent}    <Fill color="{BUBBLE}"/>\n'
         f'{indent}  </Ellipse>\n'
-        # The same thick ring on every bubble; a range (battery, steps) fills it in the accent.
+        f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
+        f'{indent}</PartDraw>\n'
+        # The same thick ring on every bubble, in a dimmed accent; a range (battery, steps)
+        # fills it in the full accent.
+        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{RING_ALPHA}">\n'
         f'{indent}  <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
-        f'{indent}    <Stroke color="{TRACK}" thickness="4"/>\n'
+        f'{indent}    <Stroke color="{ACCENT}" thickness="4"/>\n'
         f'{indent}  </Ellipse>\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
         f'{indent}</PartDraw>\n'
@@ -217,17 +221,18 @@ def main():
          '      <Ellipse x="20" y="20" width="410" height="410">\n'
          '        <Stroke color="#FF333333" thickness="1"/>\n      </Ellipse>\n'
          '      <Variant mode="AMBIENT" target="alpha" value="255"/>\n    </PartDraw>\n',
-         '    <DigitalClock x="75" y="178" width="300" height="90">\n'
+         # Time and date sit high, just under the top arc, leaving the lower half to the bubbles.
+         '    <DigitalClock x="75" y="128" width="300" height="90">\n'
          '      <TimeText format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" x="0" y="0" width="300" height="90">\n'
          f'        <Font family="{FONT}" size="74" color="{WHITE}" weight="LIGHT"/>\n'
          '      </TimeText>\n    </DigitalClock>\n',
          # "MON," in white and "NOV 9" in cyan, as in the BB10 design.
-         '    <PartText x="100" y="266" width="120" height="32">\n'
+         '    <PartText x="100" y="216" width="120" height="32">\n'
          '      <Text align="END">\n'
          f'        <Font family="{FONT}" size="23" color="{WHITE}">'
          '<Upper><Template>%s,<Parameter expression="[DAY_OF_WEEK_S]"/></Template></Upper></Font>\n'
          '      </Text>\n    </PartText>\n',
-         '    <PartText x="228" y="266" width="130" height="32">\n'
+         '    <PartText x="228" y="216" width="130" height="32">\n'
          '      <Variant mode="AMBIENT" target="alpha" value="200"/>\n'
          '      <Text align="START">\n'
          f'        <Font family="{FONT}" size="23" color="{ACCENT}">'
