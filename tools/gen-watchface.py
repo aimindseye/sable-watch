@@ -20,7 +20,7 @@ ACCENTS = [  # id, label resource, colour
 WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
-TRACK = "#FF2B4552"
+RING_ALPHA = 90  # of 255: the resting ring, dimmer than a range's fill
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -34,7 +34,7 @@ SLOTS = [
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
     (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 362, 280, 30, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
+    (3, "heart_rate", 360, 284, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
     (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
     (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
@@ -63,9 +63,13 @@ def bubble(d, indent):
         f'{indent}  <Ellipse x="1" y="1" width="{d - 2}" height="{d - 2}">\n'
         f'{indent}    <Fill color="{BUBBLE}"/>\n'
         f'{indent}  </Ellipse>\n'
-        # The same thick ring on every bubble; a range (battery, steps) fills it in the accent.
+        f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
+        f'{indent}</PartDraw>\n'
+        # The same thick ring on every bubble, in a dimmed accent; a range (battery, steps)
+        # fills it in the full accent.
+        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{RING_ALPHA}">\n'
         f'{indent}  <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
-        f'{indent}    <Stroke color="{TRACK}" thickness="4"/>\n'
+        f'{indent}    <Stroke color="{ACCENT}" thickness="4"/>\n'
         f'{indent}  </Ellipse>\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
         f'{indent}</PartDraw>\n'
