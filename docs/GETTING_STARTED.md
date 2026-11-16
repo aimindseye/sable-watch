@@ -28,7 +28,17 @@ The first version (`Tensevenwatchface`) built, but Android Studio couldn't start
 3. System image: Wear OS 5 or later (API 34+), x86_64. Download it if needed. Finish.
 4. Start it and wait for the watch face.
 
-## 4. Run the face
+## The quick way: one command
+
+Once an emulator (or the watch, step 5) is running, you can skip the run configurations entirely. In Terminal (Git Bash on Windows), in the project folder:
+
+```
+bash tools/try.sh
+```
+
+It builds everything, installs the watch app and the face on each connected watch and sets the face active, and installs and opens the phone app on each connected phone. `bash tools/try.sh sable` puts the SableOS build on the phone instead. Run it again after every `git pull`.
+
+## 4. Run the face from Android Studio
 
 1. In the run configuration list (top toolbar), pick **Watch face**, and the emulator as the device. Press Run. It installs the face and stops; that's expected.
 2. On the emulator, long-press the watch face, swipe left to the end, tap **+ Add**, and pick **Sable**.
