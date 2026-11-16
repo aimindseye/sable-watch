@@ -49,6 +49,9 @@ object WatchContract {
     const val OPEN_WEATHER = "weather"
     const val OPEN_CITIES = "cities"
 
+    /** `open/message/<HubItem.id>`: the phone opens that conversation's notification. */
+    const val OPEN_MESSAGE = "message"
+
     fun openUri(target: String): String = "$OPEN_SCHEME://$OPEN_HOST/$target"
 
     const val KEY_CITIES = "cities"

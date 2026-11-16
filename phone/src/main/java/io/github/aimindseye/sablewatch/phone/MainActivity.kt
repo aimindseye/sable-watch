@@ -192,7 +192,7 @@ private fun MainScreens(
                 Screen.FACE -> Body(stringResource(R.string.face_help))
                 Screen.CITIES -> CitiesScreen(focusFirst, changed)
                 Screen.AGENDA -> AgendaScreen(status, focusFirst, changed)
-                Screen.MESSAGES -> MessagesScreen(status, focusFirst)
+                Screen.MESSAGES -> MessagesScreen(status, focusFirst, changed)
                 Screen.WEATHER -> WeatherScreen(status, focusFirst, changed)
                 Screen.HEALTH -> Body(stringResource(R.string.health_help))
                 Screen.CONNECTION -> ConnectionScreen(status, focusFirst, refresh)
@@ -270,8 +270,10 @@ internal fun AgendaScreen(status: Status?, modifier: Modifier, changed: () -> Un
 }
 
 @Composable
-internal fun MessagesScreen(status: Status?, modifier: Modifier) {
+internal fun MessagesScreen(status: Status?, modifier: Modifier, changed: () -> Unit) {
     val context = LocalContext.current
+    val settings = remember { Settings(context) }
+    var hubOnWatch by remember { mutableStateOf(settings.hubOnWatch) }
     Dim(status?.messages.orEmpty())
     Spacer(Modifier.height(8.dp))
     Body(stringResource(if (BuildConfig.SABLE_OS) R.string.messages_help_sable else R.string.messages_help_generic))
@@ -282,6 +284,12 @@ internal fun MessagesScreen(status: Status?, modifier: Modifier) {
     ) {
         context.startActivity(Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS))
     }
+    Toggle(stringResource(R.string.hub_on_watch), hubOnWatch) {
+        hubOnWatch = it
+        settings.hubOnWatch = it
+        changed()
+    }
+    Dim(stringResource(R.string.hub_on_watch_help))
 }
 
 @Composable

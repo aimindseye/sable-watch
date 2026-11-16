@@ -1,6 +1,9 @@
 package io.github.aimindseye.sablewatch.sync
 
 import android.content.Context
+import android.content.SharedPreferences
+import io.github.aimindseye.sablewatch.shared.HubItem
+import io.github.aimindseye.sablewatch.shared.HubList
 import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.shared.WatchState
 import org.json.JSONArray
@@ -21,6 +24,23 @@ class StateStore(context: Context) {
     fun save(state: WatchState) {
         prefs.edit().putString(KEY, toJson(WatchContract.encode(state)).toString()).apply()
     }
+
+    /** The Hub list, or null when "Hub on the watch" is off on the phone. */
+    fun loadHub(): List<HubItem>? = prefs.getString(KEY_HUB, null)?.let { raw ->
+        runCatching { JSONArray(raw) }.getOrNull()?.let { a -> HubList.decode((0 until a.length()).map(a::getString)) }
+    }
+
+    fun saveHub(encoded: List<String>?) {
+        prefs.edit().apply {
+            if (encoded == null) remove(KEY_HUB) else putString(KEY_HUB, JSONArray(encoded).toString())
+        }.apply()
+    }
+
+    fun listen(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+
+    fun stopListening(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
+        prefs.unregisterOnSharedPreferenceChangeListener(listener)
 
     private fun toJson(map: Map<String, Any>): JSONObject = JSONObject().apply {
         map.forEach { (key, value) ->
@@ -53,6 +73,7 @@ class StateStore(context: Context) {
     private companion object {
         const val FILE = "sable_watch_state"
         const val KEY = "state"
+        const val KEY_HUB = "hub"
         const val LONG_SUFFIX = "#long"
     }
 }

@@ -67,6 +67,8 @@
     <string name="messages_help_sable">The count comes from Sable Hub, so it follows Hub\'s read, snooze and privacy settings. Notification access makes the watch update as soon as a message arrives.</string>
     <string name="messages_help_generic">The count comes from TenSeven Launcher\'s Hub when it is installed with the same signing key. Notification access makes the watch update as soon as a message arrives, and gives a plain count without TenSeven. Only counts leave the phone.</string>
     <string name="notification_access">Notification access</string>
+    <string name="hub_on_watch">Hub on the watch</string>
+    <string name="hub_on_watch_help">Off: the watch gets only the unread count. On: tapping the Hub bubble shows your latest conversations on the watch (app, sender and the first line of each message), and tapping one opens it here to read and reply. Needs notification access. Messages hidden on the lock screen are never sent.</string>
 
     <string name="weather_line">%1$s %2$d°%3$s %4$s</string>
     <string name="weather_none">No weather</string>

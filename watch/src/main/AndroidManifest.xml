@@ -104,6 +104,13 @@
                 android:value="io.github.aimindseye.sablewatch.face" />
         </service>
 
+        <!-- The Hub list on the watch, opened from the Hub bubble. -->
+        <activity
+            android:name=".hub.HubActivity"
+            android:exported="false"
+            android:label="@string/hub_title"
+            android:taskAffinity="" />
+
         <!-- A tapped Sable bubble: asks the phone to open the matching screen, then closes. -->
         <activity
             android:name=".open.OpenOnPhoneActivity"

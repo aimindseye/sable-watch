@@ -7,24 +7,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.CalendarContract
 import io.github.aimindseye.sablewatch.phone.MainActivity
+import io.github.aimindseye.sablewatch.phone.sync.UnreadListenerService
 import io.github.aimindseye.sablewatch.shared.WatchContract
 
 /**
  * Opens what a tapped bubble on the watch points at (`sablewatch://open/<target>`), then closes:
- * Hub for the message count, the calendar for Agenda Peek, and Sable Watch's own weather or
- * world clock settings. The link carries no data, so any app opening it can only show a screen.
+ * Hub for the message count, a conversation from the watch's Hub list, the calendar for Agenda
+ * Peek, and Sable Watch's own weather or world clock settings. The link carries no data, so any app opening it can only show a screen.
  */
 class OpenFromWatchActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val target = intent?.data?.takeIf { it.host == WatchContract.OPEN_HOST }?.lastPathSegment
-        when (target) {
+        val segments = intent?.data?.takeIf { it.host == WatchContract.OPEN_HOST }?.pathSegments.orEmpty()
+        when (segments.firstOrNull()) {
+            WatchContract.OPEN_MESSAGE -> openMessage(segments.getOrNull(1))
             WatchContract.OPEN_HUB -> openHub()
             WatchContract.OPEN_AGENDA -> openCalendar()
             WatchContract.OPEN_CITIES -> openSection(MainActivity.SECTION_CITIES)
             else -> openSection(MainActivity.SECTION_WEATHER)
         }
         finish()
+    }
+
+    /** A conversation from the watch's Hub list; Hub itself when it has gone since. */
+    private fun openMessage(id: String?) {
+        if (id == null || !UnreadListenerService.open(id, this)) openHub()
     }
 
     private fun openHub() {

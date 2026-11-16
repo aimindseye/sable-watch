@@ -94,7 +94,7 @@ internal fun SetupWizard(status: Status?, changed: () -> Unit, refresh: () -> Un
                     Body(stringResource(R.string.face_help))
                 }
 
-                Step.MESSAGES -> MessagesScreen(status, focusFirst)
+                Step.MESSAGES -> MessagesScreen(status, focusFirst, changed)
 
                 Step.AGENDA -> AgendaScreen(status, focusFirst, changed)
 

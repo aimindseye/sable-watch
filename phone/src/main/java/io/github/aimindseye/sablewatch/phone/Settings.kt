@@ -43,6 +43,14 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_SKIP_ALL_DAY, true)
         set(value) = prefs.edit { putBoolean(KEY_SKIP_ALL_DAY, value) }
 
+    /**
+     * Opt-in: send the watch a Hub list (app, sender and the start of each message), not just
+     * the count. Off by default; turning it off deletes the list from the watch.
+     */
+    var hubOnWatch: Boolean
+        get() = prefs.getBoolean(KEY_HUB_ON_WATCH, false)
+        set(value) = prefs.edit { putBoolean(KEY_HUB_ON_WATCH, value) }
+
     /** The first-run setup wizard has been finished or skipped. */
     var setupDone: Boolean
         get() = prefs.getBoolean(KEY_SETUP_DONE, false)
@@ -124,6 +132,7 @@ class Settings(context: Context) {
         private const val KEY_SKIP_ALL_DAY = "agenda_skip_all_day"
         private const val KEY_LAST_SYNC = "last_sync"
         private const val KEY_SETUP_DONE = "setup_done"
+        private const val KEY_HUB_ON_WATCH = "hub_on_watch"
         private const val KEY_WEATHER_PLACE = "weather_place"
         private const val KEY_WEATHER_CACHE = "weather_cache"
         private const val KEY_FAHRENHEIT = "weather_fahrenheit"

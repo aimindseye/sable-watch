@@ -14,8 +14,23 @@ and battery never involve the phone.
 | (fallback) | Open-Meteo, if a city is picked | none |
 | World clock | Cities picked in the app; the times are computed on the watch | same |
 
-Only counts and the next event's title and times leave the phone: no message text, sender or
-notification content. "Show every event as Busy" hides titles too.
+By default only counts and the next event's title and times leave the phone: no message text,
+sender or notification content. "Show every event as Busy" hides titles too.
+
+## Hub on the watch (opt-in)
+
+"Hub on the watch", in the app's Messages section and off by default, adds a BB10-style Hub list
+on the watch, opened by tapping the Hub bubble. With it on, the phone also sends, at
+`/sablewatch/hub`, the newest 20 message notifications with:
+
+- the app's name, the sender (or group name), and the first 120 characters of the latest message;
+- the time and the unread count;
+- an opaque id (a hash of the notification key), so a tap on the watch opens that conversation
+  on the phone.
+
+It reads them through notification access, so it works the same with TenSeven, Sable Hub or no
+Hub. Notifications an app marks as secret (hidden on the lock screen) are never sent. Turning
+the setting off deletes the list from the watch. Nothing is stored on the phone.
 
 ## Who may read the Hub counts
 

@@ -69,11 +69,14 @@ class OpenOnPhoneActivity : Activity() {
         private const val SHOW_MS = 1_500L
         private const val TEXT_SP = 16f
 
+        fun intent(context: Context, target: String): Intent =
+            Intent(context, OpenOnPhoneActivity::class.java).putExtra(EXTRA_TARGET, target)
+
         /** The tap action for a bubble; one request code per target so the extras stay apart. */
         fun tapAction(context: Context, target: String): PendingIntent = PendingIntent.getActivity(
             context,
             target.hashCode(),
-            Intent(context, OpenOnPhoneActivity::class.java).putExtra(EXTRA_TARGET, target),
+            intent(context, target),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     }

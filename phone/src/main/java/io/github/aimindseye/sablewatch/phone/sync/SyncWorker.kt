@@ -36,6 +36,11 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
             settings.lastFingerprint = fingerprint
             settings.lastSyncNodes = nodes
         }
+        // The opt-in Hub list. The Data Layer drops a put that changes nothing, so it is sent
+        // every time; with the setting off it is deleted (a no-op when it was never sent).
+        val hub = if (settings.hubOnWatch) UnreadListenerService.hubItems().orEmpty() else null
+        runCatching { StateSender.sendHub(applicationContext, hub) }
+            .onFailure { Log.w(TAG, "Could not send the Hub list", it) }
         settings.lastSyncMillis = now
         state.nextEvent?.let { event ->
             // The watch moves the arc on its own at start and end; after the end it needs the next event.
