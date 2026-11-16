@@ -20,7 +20,9 @@ ACCENTS = [  # id, label resource, colour
 WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
-RING_ALPHA = 90  # of 255: the resting ring, dimmer than a range's fill
+TRACK_ALPHA = 90  # of 255: under a range (battery, steps), the unfilled part of the ring
+# Per-slot text size, where the slot's usual source sends long words ("Heart rate" before a reading).
+TEXT_SIZE = {"heart_rate": 15}
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -30,14 +32,16 @@ COMPLICATION_END = "      </Complication>\n"
 SABLE = "io.github.aimindseye.sablewatch/io.github.aimindseye.sablewatch.complications."
 
 SLOTS = [
-    (1, "messages", 78, 262, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
+    # Layout C ("Rows"): Hub, weather and heart rate in a row under the date, battery and steps
+    # centred below them.
+    (1, "messages", 135, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE",
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
-    (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
+    (2, "weather", 225, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 360, 284, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
-    (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
+    (3, "heart_rate", 315, 275, 38, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
+    (4, "battery", 178, 360, 36, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
-    (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
+    (5, "steps", 272, 360, 36, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "STEP_COUNT", "SHORT_TEXT"),
 ]
 
@@ -57,7 +61,7 @@ def text(x, y, w, h, size, color, expr, indent, weight="NORMAL", ambient=None):
     )
 
 
-def bubble(d, indent):
+def bubble(d, indent, ring_alpha=255):
     return (
         f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}">\n'
         f'{indent}  <Ellipse x="1" y="1" width="{d - 2}" height="{d - 2}">\n'
@@ -65,9 +69,9 @@ def bubble(d, indent):
         f'{indent}  </Ellipse>\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
         f'{indent}</PartDraw>\n'
-        # The same thick ring on every bubble, in a dimmed accent; a range (battery, steps)
-        # fills it in the full accent.
-        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{RING_ALPHA}">\n'
+        # The same thick accent ring on every bubble. Under a range (battery, steps) it is dimmed
+        # to a track that the range fills in the full accent.
+        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{ring_alpha}">\n'
         f'{indent}  <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
         f'{indent}    <Stroke color="{ACCENT}" thickness="4"/>\n'
         f'{indent}  </Ellipse>\n'
@@ -112,11 +116,12 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
         f'      <BoundingOval x="0" y="0" width="{d}" height="{d}"/>\n',
     ]
     isz = max(18, r // 2 + 4)
-    tsz = 20 if r >= 36 else 17
+    tsz = TEXT_SIZE.get(name, 20 if r >= 36 else 17)
     j = i + "  "
 
     def complication(ctype, *parts):
-        out.extend([f'      <Complication type="{ctype}">\n', bubble(d, j), *parts, COMPLICATION_END])
+        ring = TRACK_ALPHA if ctype == "RANGED_VALUE" else 255
+        out.extend([f'      <Complication type="{ctype}">\n', bubble(d, j, ring), *parts, COMPLICATION_END])
 
     # SHORT_TEXT: icon on top, value below (the BB10 bubbles).
     complication(
@@ -222,17 +227,17 @@ def main():
          '        <Stroke color="#FF333333" thickness="1"/>\n      </Ellipse>\n'
          '      <Variant mode="AMBIENT" target="alpha" value="255"/>\n    </PartDraw>\n',
          # Time and date sit high, just under the top arc, leaving the lower half to the bubbles.
-         '    <DigitalClock x="75" y="128" width="300" height="90">\n'
+         '    <DigitalClock x="75" y="96" width="300" height="90">\n'
          '      <TimeText format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" x="0" y="0" width="300" height="90">\n'
          f'        <Font family="{FONT}" size="74" color="{WHITE}" weight="LIGHT"/>\n'
          '      </TimeText>\n    </DigitalClock>\n',
          # "MON," in white and "NOV 9" in cyan, as in the BB10 design.
-         '    <PartText x="100" y="216" width="120" height="32">\n'
+         '    <PartText x="100" y="184" width="120" height="32">\n'
          '      <Text align="END">\n'
          f'        <Font family="{FONT}" size="23" color="{WHITE}">'
          '<Upper><Template>%s,<Parameter expression="[DAY_OF_WEEK_S]"/></Template></Upper></Font>\n'
          '      </Text>\n    </PartText>\n',
-         '    <PartText x="228" y="216" width="130" height="32">\n'
+         '    <PartText x="228" y="184" width="130" height="32">\n'
          '      <Variant mode="AMBIENT" target="alpha" value="200"/>\n'
          '      <Text align="START">\n'
          f'        <Font family="{FONT}" size="23" color="{ACCENT}">'
