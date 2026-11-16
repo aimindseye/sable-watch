@@ -13,6 +13,7 @@ class WatchContractTest {
         unread = 3,
         unreadSource = UnreadSource.HUB,
         weather = Weather(68, "F", "Cloudy", "Jersey City"),
+        weatherSpot = WeatherSpot(40.7178, -74.0431, "Jersey City", fahrenheit = true),
         updatedAtMillis = 42L
     )
 

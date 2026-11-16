@@ -6,4 +6,18 @@
     <string name="messages_label">Sable Hub</string>
     <string name="messages_description">%1$d unread in Hub</string>
     <string name="weather_label">Sable Weather</string>
+    <string name="opening_on_phone">Opening on phone…</string>
+    <string name="opened_on_phone">Open your phone</string>
+    <string name="phone_not_reachable">Phone not connected</string>
+    <string name="hub_title">Hub</string>
+    <plurals name="hub_unread">
+        <item quantity="one">%d unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
+    <string name="hub_empty">No new messages</string>
+    <string name="hub_off">To see your messages here, turn on Hub on the watch in Sable Watch on your phone (Messages).</string>
+    <string name="hub_app_label">Sable Hub</string>
+    <string name="hub_refresh">Refresh</string>
+    <string name="hub_refreshing">Asking phone…</string>
+    <string name="hub_open_on_phone">Open Hub on phone</string>
 </resources>

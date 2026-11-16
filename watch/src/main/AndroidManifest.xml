@@ -3,6 +3,9 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
+    <!-- Open-Meteo for the phone's weather city, only while the phone has been away an hour. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="false"
         android:usesCleartextTraffic="false"
@@ -94,15 +97,37 @@
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
                 android:value="SHORT_TEXT" />
-            <!-- Pushed by the phone (StateListenerService); no polling. -->
+            <!-- Pushed by the phone; polled every 30 minutes only to fetch weather on the watch
+                 when the phone has been away for over an hour. -->
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
-                android:value="0" />
+                android:value="1800" />
             <!-- The Sable face may use this source as its default without asking (see watchface.xml). -->
             <meta-data
                 android:name="android.support.wearable.complications.SAFE_WATCH_FACES"
                 android:value="io.github.aimindseye.sablewatch.face" />
         </service>
+
+        <!-- The Hub list on the watch, opened from the Hub bubble. -->
+        <activity
+            android:name=".hub.HubActivity"
+            android:exported="true"
+            android:label="@string/hub_app_label"
+            android:taskAffinity="">
+            <!-- Also in the watch's app list, to refresh from the phone or read the Hub. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- A tapped Sable bubble: asks the phone to open the matching screen, then closes. -->
+        <activity
+            android:name=".open.OpenOnPhoneActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="" />
 
         <!-- The phone's state over the Wear OS Data Layer. -->
         <service

@@ -1,6 +1,7 @@
 package io.github.aimindseye.sablewatch.phone
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
@@ -50,20 +51,41 @@ import kotlinx.coroutines.withContext
  * works by touch (back arrow and buttons) and by keyboard (Esc, Enter, number keys, S).
  */
 class MainActivity : ComponentActivity() {
+    /** A section to open, from a tapped bubble on the watch; consumed once shown. */
+    private var section by mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SyncWorker.schedulePeriodic(this)
-        setContent { App() }
+        section = intent?.getStringExtra(EXTRA_SECTION)
+        setContent { App(section) { section = null } }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        section = intent.getStringExtra(EXTRA_SECTION)
+    }
+
+    companion object {
+        private const val EXTRA_SECTION = "section"
+        const val SECTION_MESSAGES = "messages"
+        const val SECTION_AGENDA = "agenda"
+        const val SECTION_WEATHER = "weather"
+        const val SECTION_CITIES = "cities"
+
+        fun intent(context: Context, section: String): Intent = Intent(context, MainActivity::class.java)
+            .putExtra(EXTRA_SECTION, section)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 }
 
-private enum class Screen(val title: Int) {
+private enum class Screen(val title: Int, val section: String? = null) {
     HOME(R.string.title),
     FACE(R.string.section_face),
-    CITIES(R.string.section_cities),
-    AGENDA(R.string.section_agenda),
-    MESSAGES(R.string.section_messages),
-    WEATHER(R.string.section_weather),
+    CITIES(R.string.section_cities, MainActivity.SECTION_CITIES),
+    AGENDA(R.string.section_agenda, MainActivity.SECTION_AGENDA),
+    MESSAGES(R.string.section_messages, MainActivity.SECTION_MESSAGES),
+    WEATHER(R.string.section_weather, MainActivity.SECTION_WEATHER),
     HEALTH(R.string.section_health),
     CONNECTION(R.string.section_connection)
 }
@@ -71,7 +93,7 @@ private enum class Screen(val title: Int) {
 private val NUMBER_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven)
 
 @Composable
-private fun App() {
+private fun App(section: String?, sectionShown: () -> Unit) {
     val context = LocalContext.current
     val settings = remember { Settings(context) }
     var setupDone by remember { mutableStateOf(settings.setupDone) }
@@ -93,7 +115,7 @@ private fun App() {
             .systemBarsPadding()
     ) {
         if (setupDone) {
-            MainScreens(status, changed, refresh = { version++ }) {
+            MainScreens(status, section, sectionShown, changed, refresh = { version++ }) {
                 settings.setupDone = false
                 setupDone = false
             }
@@ -109,9 +131,20 @@ private fun App() {
 
 /** The home list and its sections, once setup is done. */
 @Composable
-private fun MainScreens(status: Status?, changed: () -> Unit, refresh: () -> Unit, runSetup: () -> Unit) {
+private fun MainScreens(
+    status: Status?,
+    section: String?,
+    sectionShown: () -> Unit,
+    changed: () -> Unit,
+    refresh: () -> Unit,
+    runSetup: () -> Unit
+) {
     val context = LocalContext.current
     var screen by remember { mutableStateOf(Screen.HOME) }
+    LaunchedEffect(section) {
+        Screen.entries.firstOrNull { section != null && it.section == section }?.let { screen = it }
+        if (section != null) sectionShown()
+    }
     val home = screen == Screen.HOME
     val back = { screen = Screen.HOME }
     val sync = {
@@ -159,7 +192,7 @@ private fun MainScreens(status: Status?, changed: () -> Unit, refresh: () -> Uni
                 Screen.FACE -> Body(stringResource(R.string.face_help))
                 Screen.CITIES -> CitiesScreen(focusFirst, changed)
                 Screen.AGENDA -> AgendaScreen(status, focusFirst, changed)
-                Screen.MESSAGES -> MessagesScreen(status, focusFirst)
+                Screen.MESSAGES -> MessagesScreen(status, focusFirst, changed)
                 Screen.WEATHER -> WeatherScreen(status, focusFirst, changed)
                 Screen.HEALTH -> Body(stringResource(R.string.health_help))
                 Screen.CONNECTION -> ConnectionScreen(status, focusFirst, refresh)
@@ -237,8 +270,10 @@ internal fun AgendaScreen(status: Status?, modifier: Modifier, changed: () -> Un
 }
 
 @Composable
-internal fun MessagesScreen(status: Status?, modifier: Modifier) {
+internal fun MessagesScreen(status: Status?, modifier: Modifier, changed: () -> Unit) {
     val context = LocalContext.current
+    val settings = remember { Settings(context) }
+    var hubOnWatch by remember { mutableStateOf(settings.hubOnWatch) }
     Dim(status?.messages.orEmpty())
     Spacer(Modifier.height(8.dp))
     Body(stringResource(if (BuildConfig.SABLE_OS) R.string.messages_help_sable else R.string.messages_help_generic))
@@ -249,6 +284,12 @@ internal fun MessagesScreen(status: Status?, modifier: Modifier) {
     ) {
         context.startActivity(Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS))
     }
+    Toggle(stringResource(R.string.hub_on_watch), hubOnWatch) {
+        hubOnWatch = it
+        settings.hubOnWatch = it
+        changed()
+    }
+    Dim(stringResource(R.string.hub_on_watch_help))
 }
 
 @Composable

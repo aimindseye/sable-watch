@@ -14,6 +14,7 @@ import io.github.aimindseye.sablewatch.shared.NextEvent
 import io.github.aimindseye.sablewatch.shared.UnreadSource
 import io.github.aimindseye.sablewatch.shared.WatchState
 import io.github.aimindseye.sablewatch.shared.Weather
+import io.github.aimindseye.sablewatch.shared.WeatherSpot
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -34,6 +35,9 @@ class PhoneData(context: Context) {
             unread = unread,
             unreadSource = source,
             weather = weather(settings, now, allowNetwork = true),
+            weatherSpot = settings.weatherPlace?.let {
+                WeatherSpot(it.latitude, it.longitude, it.name, settings.fahrenheit)
+            },
             updatedAtMillis = now
         )
     }

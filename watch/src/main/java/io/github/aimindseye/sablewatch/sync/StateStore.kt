@@ -1,8 +1,12 @@
 package io.github.aimindseye.sablewatch.sync
 
 import android.content.Context
+import android.content.SharedPreferences
+import io.github.aimindseye.sablewatch.shared.HubItem
+import io.github.aimindseye.sablewatch.shared.HubList
 import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.shared.WatchState
+import io.github.aimindseye.sablewatch.shared.Weather
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -21,6 +25,42 @@ class StateStore(context: Context) {
     fun save(state: WatchState) {
         prefs.edit().putString(KEY, toJson(WatchContract.encode(state)).toString()).apply()
     }
+
+    /** The Hub list, or null when "Hub on the watch" is off on the phone. */
+    fun loadHub(): List<HubItem>? = prefs.getString(KEY_HUB, null)?.let { raw ->
+        runCatching { JSONArray(raw) }.getOrNull()?.let { a -> HubList.decode((0 until a.length()).map(a::getString)) }
+    }
+
+    fun saveHub(encoded: List<String>?) {
+        prefs.edit().apply {
+            if (encoded == null) remove(KEY_HUB) else putString(KEY_HUB, JSONArray(encoded).toString())
+        }.apply()
+    }
+
+    /** Weather the watch fetched itself, and when; used only while the phone's is old. */
+    fun loadWatchWeather(): Pair<Weather, Long>? {
+        val raw = prefs.getString(KEY_WATCH_WEATHER, null) ?: return null
+        return runCatching {
+            val j = JSONObject(raw)
+            Weather(j.getInt("t"), j.getString("u"), j.getString("c"), j.getString("p")) to j.getLong("at")
+        }.getOrNull()
+    }
+
+    fun saveWatchWeather(weather: Weather, at: Long) {
+        val j = JSONObject()
+            .put("t", weather.temperature)
+            .put("u", weather.unit)
+            .put("c", weather.condition)
+            .put("p", weather.place)
+            .put("at", at)
+        prefs.edit().putString(KEY_WATCH_WEATHER, j.toString()).apply()
+    }
+
+    fun listen(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+
+    fun stopListening(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
+        prefs.unregisterOnSharedPreferenceChangeListener(listener)
 
     private fun toJson(map: Map<String, Any>): JSONObject = JSONObject().apply {
         map.forEach { (key, value) ->
@@ -53,6 +93,8 @@ class StateStore(context: Context) {
     private companion object {
         const val FILE = "sable_watch_state"
         const val KEY = "state"
+        const val KEY_HUB = "hub"
+        const val KEY_WATCH_WEATHER = "watch_weather"
         const val LONG_SUFFIX = "#long"
     }
 }

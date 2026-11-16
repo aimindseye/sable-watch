@@ -3,6 +3,16 @@
 <WatchFace width="450" height="450">
   <Metadata key="CLOCK_TYPE" value="DIGITAL"/>
   <Metadata key="PREVIEW_TIME" value="10:09:32"/>
+  <UserConfigurations>
+    <ColorConfiguration id="accent" displayName="accent_label" defaultValue="cyan">
+      <ColorOption id="cyan" displayName="color_cyan" colors="#FF00A8DF"/>
+      <ColorOption id="green" displayName="color_green" colors="#FF3DDC84"/>
+      <ColorOption id="amber" displayName="color_amber" colors="#FFFFB300"/>
+      <ColorOption id="red" displayName="color_red" colors="#FFFF5252"/>
+      <ColorOption id="violet" displayName="color_violet" colors="#FFB388FF"/>
+      <ColorOption id="white" displayName="color_white" colors="#FFEDEDED"/>
+    </ColorConfiguration>
+  </UserConfigurations>
   <Scene backgroundColor="#FF000000">
     <PartImage x="0" y="0" width="450" height="450">
       <Variant mode="AMBIENT" target="alpha" value="0"/>
@@ -12,12 +22,16 @@
       <Variant mode="AMBIENT" target="alpha" value="0"/>
       <Image resource="ticks"/>
     </PartImage>
+    <PartImage x="0" y="0" width="450" height="450" tintColor="[CONFIGURATION.accent.0]">
+      <Variant mode="AMBIENT" target="alpha" value="0"/>
+      <Image resource="ticks_hours"/>
+    </PartImage>
     <PartDraw x="0" y="0" width="450" height="450">
       <Arc centerX="225" centerY="225" width="400" height="400" startAngle="-90" endAngle="90">
-        <Stroke color="#FF00A8DF" thickness="3"/>
+        <Stroke color="[CONFIGURATION.accent.0]" thickness="3"/>
       </Arc>
       <Ellipse x="19" y="219" width="12" height="12">
-        <Fill color="#FF00A8DF"/>
+        <Fill color="[CONFIGURATION.accent.0]"/>
       </Ellipse>
       <Variant mode="AMBIENT" target="alpha" value="0"/>
     </PartDraw>
@@ -40,7 +54,7 @@
     <PartText x="228" y="266" width="130" height="32">
       <Variant mode="AMBIENT" target="alpha" value="200"/>
       <Text align="START">
-        <Font family="SYNC_TO_DEVICE" size="23" color="#FF00A8DF"><Upper><Template>%s %s<Parameter expression="[MONTH_S]"/><Parameter expression="[DAY]"/></Template></Upper></Font>
+        <Font family="SYNC_TO_DEVICE" size="23" color="[CONFIGURATION.accent.0]"><Upper><Template>%s %s<Parameter expression="[MONTH_S]"/><Parameter expression="[DAY]"/></Template></Upper></Font>
       </Text>
     </PartText>
     <ComplicationSlot slotId="0" name="top_arc" displayName="slot_top_arc" x="0" y="0" width="450" height="450" supportedTypes="LONG_TEXT SHORT_TEXT" isCustomizable="TRUE">
@@ -80,7 +94,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="26" y="11" width="23" height="23" tintColor="#FF00A8DF">
+        <PartImage x="26" y="11" width="23" height="23" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -105,7 +119,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="17" y="17" width="41" height="41" tintColor="#FF00A8DF">
+        <PartImage x="17" y="17" width="41" height="41" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -146,7 +160,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="25" y="10" width="22" height="22" tintColor="#FF00A8DF">
+        <PartImage x="25" y="10" width="22" height="22" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -171,7 +185,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="16" y="16" width="39" height="39" tintColor="#FF00A8DF">
+        <PartImage x="16" y="16" width="39" height="39" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -212,7 +226,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="20" y="9" width="19" height="19" tintColor="#FF00A8DF">
+        <PartImage x="20" y="9" width="19" height="19" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -237,7 +251,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="13" y="13" width="33" height="33" tintColor="#FF00A8DF">
+        <PartImage x="13" y="13" width="33" height="33" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -261,12 +275,12 @@
             <Stroke color="#FF1A2A33" thickness="4"/>
           </Ellipse>
           <Arc centerX="30" centerY="30" width="56" height="56" startAngle="0" endAngle="360">
-            <Stroke color="#FF00A8DF" thickness="4" cap="ROUND"/>
+            <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
           </Arc>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartImage x="20" y="9" width="19" height="19" tintColor="#FF00A8DF">
+        <PartImage x="20" y="9" width="19" height="19" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -294,7 +308,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="23" y="10" width="21" height="21" tintColor="#FF00A8DF">
+        <PartImage x="23" y="10" width="21" height="21" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -319,7 +333,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="15" y="15" width="37" height="37" tintColor="#FF00A8DF">
+        <PartImage x="15" y="15" width="37" height="37" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -343,12 +357,12 @@
             <Stroke color="#FF1A2A33" thickness="4"/>
           </Ellipse>
           <Arc centerX="34" centerY="34" width="64" height="64" startAngle="0" endAngle="360">
-            <Stroke color="#FF00A8DF" thickness="4" cap="ROUND"/>
+            <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
           </Arc>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartImage x="23" y="10" width="21" height="21" tintColor="#FF00A8DF">
+        <PartImage x="23" y="10" width="21" height="21" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -376,7 +390,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="29" y="12" width="25" height="25" tintColor="#FF00A8DF">
+        <PartImage x="29" y="12" width="25" height="25" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -401,7 +415,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="19" y="18" width="46" height="46" tintColor="#FF00A8DF">
+        <PartImage x="19" y="18" width="46" height="46" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -425,12 +439,12 @@
             <Stroke color="#FF1A2A33" thickness="4"/>
           </Ellipse>
           <Arc centerX="42" centerY="42" width="80" height="80" startAngle="0" endAngle="360">
-            <Stroke color="#FF00A8DF" thickness="4" cap="ROUND"/>
+            <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
           </Arc>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartImage x="29" y="12" width="25" height="25" tintColor="#FF00A8DF">
+        <PartImage x="29" y="12" width="25" height="25" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>

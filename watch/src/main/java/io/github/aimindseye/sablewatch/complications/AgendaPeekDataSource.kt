@@ -13,8 +13,10 @@ import androidx.wear.watchface.complications.datasource.SuspendingTimelineCompli
 import androidx.wear.watchface.complications.datasource.TimeInterval
 import androidx.wear.watchface.complications.datasource.TimelineEntry
 import io.github.aimindseye.sablewatch.R
+import io.github.aimindseye.sablewatch.open.OpenOnPhoneActivity
 import io.github.aimindseye.sablewatch.shared.AgendaPeek
 import io.github.aimindseye.sablewatch.shared.NextEvent
+import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.sync.StateStore
 import java.time.Instant
 import java.time.ZoneId
@@ -60,12 +62,15 @@ class AgendaPeekDataSource : SuspendingTimelineComplicationDataSourceService() {
         val description = PlainComplicationText.Builder(getString(R.string.agenda_label)).build()
         val text = PlainComplicationText.Builder(line).build()
         return when (type) {
-            ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(text, description).build()
+            ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(
+                text,
+                description
+            ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_AGENDA)).build()
 
             ComplicationType.SHORT_TEXT -> ShortTextComplicationData.Builder(
                 PlainComplicationText.Builder(line.substringBefore(" • ")).build(),
                 description
-            ).build()
+            ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_AGENDA)).build()
 
             else -> null
         }
