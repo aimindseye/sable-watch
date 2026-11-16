@@ -261,16 +261,31 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="26" y="11" width="23" height="23" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="26" y="11" width="23" height="23" tintColor="#FFFF4057">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
-        <PartText x="4" y="34" width="68" height="23">
+        <Condition>
+          <Expressions>
+            <Expression name="no_reading">textLength([COMPLICATION.TEXT]) &gt; 3 || textLength([COMPLICATION.TEXT]) == 0</Expression>
+          </Expressions>
+          <Compare expression="no_reading">
+            <PartText x="4" y="34" width="68" height="28">
           <Variant mode="AMBIENT" target="alpha" value="200"/>
-          <Text align="CENTER" ellipsis="TRUE">
-            <Font family="SYNC_TO_DEVICE" size="15" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
-          </Text>
-        </PartText>
+              <Text align="CENTER" ellipsis="TRUE">
+                <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="0"/></Template></Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <PartText x="4" y="34" width="68" height="28">
+          <Variant mode="AMBIENT" target="alpha" value="200"/>
+              <Text align="CENTER" ellipsis="TRUE">
+                <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
+              </Text>
+            </PartText>
+          </Default>
+        </Condition>
       </Complication>
       <Complication type="MONOCHROMATIC_IMAGE">
         <PartDraw x="0" y="0" width="76" height="76">
@@ -291,7 +306,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="17" y="17" width="41" height="41" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="17" y="17" width="41" height="41" tintColor="#FFFF4057">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
@@ -322,15 +337,29 @@
           </Arc>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartImage x="26" y="11" width="23" height="23" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="26" y="11" width="23" height="23" tintColor="#FFFF4057">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
-        <PartText x="4" y="34" width="68" height="23">
-          <Text align="CENTER" ellipsis="TRUE">
-            <Font family="SYNC_TO_DEVICE" size="15" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
-          </Text>
-        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="no_reading">textLength([COMPLICATION.TEXT]) &gt; 3 || textLength([COMPLICATION.TEXT]) == 0</Expression>
+          </Expressions>
+          <Compare expression="no_reading">
+            <PartText x="4" y="34" width="68" height="28">
+              <Text align="CENTER" ellipsis="TRUE">
+                <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="0"/></Template></Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <PartText x="4" y="34" width="68" height="28">
+              <Text align="CENTER" ellipsis="TRUE">
+                <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
+              </Text>
+            </PartText>
+          </Default>
+        </Condition>
       </Complication>
     </ComplicationSlot>
     <ComplicationSlot slotId="4" name="battery" displayName="slot_battery" x="142" y="324" width="72" height="72" supportedTypes="RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE" isCustomizable="TRUE">
