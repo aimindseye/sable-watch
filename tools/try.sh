@@ -47,7 +47,15 @@ fi
 # --- Which devices are connected, and which of them are watches. ---
 WATCHES=""
 PHONES=""
+SEEN=" "
 for serial in $("$ADB" devices | awk 'NR > 1 && $2 == "device" { print $1 }'); do
+  # A device on wireless debugging can be listed twice (by IP and by its mDNS name);
+  # its hardware serial number tells the two apart from different devices.
+  hw="$("$ADB" -s "$serial" shell getprop ro.serialno 2>/dev/null | tr -d '\r')"
+  if [[ -n "$hw" ]]; then
+    case "$SEEN" in *" $hw "*) continue ;; esac
+    SEEN="$SEEN$hw "
+  fi
   traits="$("$ADB" -s "$serial" shell getprop ro.build.characteristics 2>/dev/null | tr -d '\r')"
   case "$traits" in
     *watch*) WATCHES="$WATCHES $serial" ;;
