@@ -30,6 +30,7 @@ The watch app and the phone app share one package name on purpose: the Wear OS D
 ## Documentation
 
 - [Getting started on Windows or a Mac](docs/GETTING_STARTED.md): Android Studio, the Wear OS emulator, and a Galaxy Watch over Wi-Fi.
+- To try it, start the emulators (or connect the watch) and run `bash tools/try.sh`: it builds and installs everything.
 - [Design and recommendations](docs/DESIGN.md): what each part of the face needs, the two phone builds, and what's feasible.
 - [What the phone sends the watch](docs/DATA.md): sources on SableOS and on other phones, privacy, and when it syncs.
 - [Releasing](docs/RELEASING.md): signing on your computer, and the package names to register.
