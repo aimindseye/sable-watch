@@ -21,7 +21,8 @@ sender or notification content. "Show every event as Busy" hides titles too.
 
 "Hub on the watch", in the app's Messages section and off by default, adds a BB10-style Hub list
 on the watch, opened by tapping the Hub bubble. With it on, the phone also sends, at
-`/sablewatch/hub`, the newest 20 message notifications with:
+`/sablewatch/hub`, the newest 20 Hub notifications: message notifications, plus any from an app
+Hub is counting (or, when Hub can't be read, any clearable notification that alerts). For each:
 
 - the app's name, the sender (or group name), and the first 120 characters of the latest message;
 - the time and the unread count;

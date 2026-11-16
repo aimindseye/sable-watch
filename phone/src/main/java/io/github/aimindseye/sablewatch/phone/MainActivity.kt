@@ -1,6 +1,7 @@
 package io.github.aimindseye.sablewatch.phone
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -120,10 +121,12 @@ private fun App(section: String?, sectionShown: () -> Unit) {
                 setupDone = false
             }
         } else {
-            SetupWizard(status, changed, refresh = { version++ }) {
+            SetupWizard(status, changed, refresh = { version++ }) { close ->
                 settings.setupDone = true
                 setupDone = true
                 SyncWorker.now(context)
+                // Finish closes the app; the home list is there next time it is opened.
+                if (close) (context as? Activity)?.finish()
             }
         }
     }

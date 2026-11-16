@@ -81,6 +81,22 @@ class PhoneData(context: Context) {
     fun hasCalendarAccess(): Boolean =
         app.checkSelfPermission(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
 
+    /** The apps Hub counts unread items for right now (Sable Hub or TenSeven); empty without Hub. */
+    fun hubPackages(): Set<String> {
+        val hub = if (BuildConfig.SABLE_OS) Sources.SABLE_HUB_APPS else Sources.TENSEVEN_HUB_APPS
+        return query<Set<String>>(hub) { c ->
+            val pkg = c.getColumnIndex("package")
+            val count = c.getColumnIndex("count")
+            if (pkg < 0 || count < 0) return@query null
+            buildSet {
+                while (c.moveToNext()) {
+                    val name: String? = c.getString(pkg)
+                    if (name != null && c.getInt(count) > 0) add(name)
+                }
+            }
+        }.orEmpty()
+    }
+
     private fun counts(uri: Uri): List<Int>? = query(uri) { c ->
         val count = c.getColumnIndex("count")
         if (count < 0) return@query null
