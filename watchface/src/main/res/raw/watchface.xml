@@ -41,17 +41,17 @@
       </Ellipse>
       <Variant mode="AMBIENT" target="alpha" value="255"/>
     </PartDraw>
-    <DigitalClock x="75" y="178" width="300" height="90">
+    <DigitalClock x="75" y="128" width="300" height="90">
       <TimeText format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" x="0" y="0" width="300" height="90">
         <Font family="SYNC_TO_DEVICE" size="74" color="#FFFFFFFF" weight="LIGHT"/>
       </TimeText>
     </DigitalClock>
-    <PartText x="100" y="266" width="120" height="32">
+    <PartText x="100" y="216" width="120" height="32">
       <Text align="END">
         <Font family="SYNC_TO_DEVICE" size="23" color="#FFFFFFFF"><Upper><Template>%s,<Parameter expression="[DAY_OF_WEEK_S]"/></Template></Upper></Font>
       </Text>
     </PartText>
-    <PartText x="228" y="266" width="130" height="32">
+    <PartText x="228" y="216" width="130" height="32">
       <Variant mode="AMBIENT" target="alpha" value="200"/>
       <Text align="START">
         <Font family="SYNC_TO_DEVICE" size="23" color="[CONFIGURATION.accent.0]"><Upper><Template>%s %s<Parameter expression="[MONTH_S]"/><Parameter expression="[DAY]"/></Template></Upper></Font>

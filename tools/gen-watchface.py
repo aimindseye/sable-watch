@@ -221,17 +221,18 @@ def main():
          '      <Ellipse x="20" y="20" width="410" height="410">\n'
          '        <Stroke color="#FF333333" thickness="1"/>\n      </Ellipse>\n'
          '      <Variant mode="AMBIENT" target="alpha" value="255"/>\n    </PartDraw>\n',
-         '    <DigitalClock x="75" y="178" width="300" height="90">\n'
+         # Time and date sit high, just under the top arc, leaving the lower half to the bubbles.
+         '    <DigitalClock x="75" y="128" width="300" height="90">\n'
          '      <TimeText format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" x="0" y="0" width="300" height="90">\n'
          f'        <Font family="{FONT}" size="74" color="{WHITE}" weight="LIGHT"/>\n'
          '      </TimeText>\n    </DigitalClock>\n',
          # "MON," in white and "NOV 9" in cyan, as in the BB10 design.
-         '    <PartText x="100" y="266" width="120" height="32">\n'
+         '    <PartText x="100" y="216" width="120" height="32">\n'
          '      <Text align="END">\n'
          f'        <Font family="{FONT}" size="23" color="{WHITE}">'
          '<Upper><Template>%s,<Parameter expression="[DAY_OF_WEEK_S]"/></Template></Upper></Font>\n'
          '      </Text>\n    </PartText>\n',
-         '    <PartText x="228" y="266" width="130" height="32">\n'
+         '    <PartText x="228" y="216" width="130" height="32">\n'
          '      <Variant mode="AMBIENT" target="alpha" value="200"/>\n'
          '      <Text align="START">\n'
          f'        <Font family="{FONT}" size="23" color="{ACCENT}">'
