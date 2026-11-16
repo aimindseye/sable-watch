@@ -3,6 +3,7 @@ package io.github.aimindseye.sablewatch.phone.sync
 import android.app.Activity
 import android.app.ActivityOptions
 import android.app.Notification
+import android.app.NotificationManager
 import android.content.pm.ApplicationInfo
 import android.database.ContentObserver
 import android.os.Build
@@ -59,8 +60,30 @@ class UnreadListenerService : NotificationListenerService() {
         lastCount = runCatching { activeNotifications.orEmpty().sumOf(::countOf) }.getOrNull()
     }
 
-    private fun countOf(sbn: StatusBarNotification): Int =
-        if (isMessage(sbn)) sbn.notification.number.takeIf { it > 0 } ?: 1 else 0
+    private fun countOf(sbn: StatusBarNotification): Int = if (isMessage(sbn)) itemCount(sbn) else 0
+
+    private fun itemCount(sbn: StatusBarNotification): Int = sbn.notification.number.takeIf { it > 0 } ?: 1
+
+    /**
+     * Without Hub's app list (no Hub, or this build isn't signed to read it): any clearable
+     * notification that makes a sound or shows a heads-up, which is what Hub would list.
+     */
+    private fun isAlerting(sbn: StatusBarNotification): Boolean {
+        val isSummary = sbn.notification.flags and Notification.FLAG_GROUP_SUMMARY != 0
+        if (sbn.isOngoing || isSummary || !sbn.isClearable || sbn.packageName == packageName) return false
+        val ranking = Ranking()
+        val importance = if (currentRanking?.getRanking(sbn.key, ranking) == true) {
+            ranking.importance
+        } else {
+            NotificationManager.IMPORTANCE_DEFAULT
+        }
+        return importance >= NotificationManager.IMPORTANCE_DEFAULT
+    }
+
+    private fun isFromHubApp(sbn: StatusBarNotification, hubApps: Set<String>): Boolean {
+        val isSummary = sbn.notification.flags and Notification.FLAG_GROUP_SUMMARY != 0
+        return sbn.packageName in hubApps && !sbn.isOngoing && !isSummary
+    }
 
     private fun isMessage(sbn: StatusBarNotification): Boolean {
         val n = sbn.notification
@@ -69,9 +92,17 @@ class UnreadListenerService : NotificationListenerService() {
         return !sbn.isOngoing && !isSummary && isMessage && sbn.packageName != packageName
     }
 
-    /** The message notifications as Hub items; secret (hidden on the lock screen) ones are left out. */
-    private fun hubItems(): List<HubItem> = activeNotifications.orEmpty()
-        .filter { isMessage(it) && it.notification.visibility != Notification.VISIBILITY_SECRET }
+    /**
+     * Hub items: message notifications, plus any notification from an app Hub is counting right
+     * now ([hubApps]), so the list matches Hub even for apps that don't mark their notifications
+     * as messages. Secret (hidden on the lock screen) ones are left out.
+     */
+    private fun hubItems(hubApps: Set<String>): List<HubItem> = activeNotifications.orEmpty()
+        .filter { sbn ->
+            val included = isMessage(sbn) ||
+                if (hubApps.isEmpty()) isAlerting(sbn) else isFromHubApp(sbn, hubApps)
+            included && sbn.notification.visibility != Notification.VISIBILITY_SECRET
+        }
         .map { sbn ->
             val extras = sbn.notification.extras
 
@@ -88,7 +119,7 @@ class UnreadListenerService : NotificationListenerService() {
                     )?.toString().orEmpty(),
                 preview = (lastMessage ?: extras.getCharSequence(Notification.EXTRA_TEXT))?.toString().orEmpty(),
                 timeMillis = sbn.notification.`when`.takeIf { it > 0 } ?: sbn.postTime,
-                count = countOf(sbn)
+                count = itemCount(sbn)
             )
         }
 
@@ -120,7 +151,8 @@ class UnreadListenerService : NotificationListenerService() {
         private var connected: UnreadListenerService? = null
 
         /** The Hub list for the watch, or null while notification access is off. */
-        fun hubItems(): List<HubItem>? = connected?.let { runCatching { it.hubItems() }.getOrNull() }
+        fun hubItems(hubApps: Set<String>): List<HubItem>? =
+            connected?.let { runCatching { it.hubItems(hubApps) }.getOrNull() }
 
         /** Opens a Hub item tapped on the watch; false when it is gone or access is off. */
         fun open(id: String, from: Activity): Boolean = connected?.openItem(id, from) ?: false

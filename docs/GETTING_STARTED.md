@@ -38,6 +38,16 @@ bash tools/try.sh
 
 It builds everything, installs the watch app and the face on each connected watch and sets the face active, and installs and opens the phone app on each connected phone. `bash tools/try.sh sable` puts the SableOS build on the phone instead. Run it again after every `git pull`.
 
+To install with the registered key instead of Android Studio's debug key (TenSeven's Hub counts only reach an app signed with the TenSeven key), set the two release variables first. The script asks for the keystore password once and checks the certificate before installing:
+
+```bash
+export SABLEWATCH_KEYSTORE=~/keys/tenseven-release.jks
+export SABLEWATCH_KEY_ALIAS=tenseven
+bash tools/try.sh
+```
+
+The first run after switching keys can't update the debug-key installs in place, so it offers to uninstall them. Say yes once per device; the phone app then needs its notification and calendar access again, and the face needs picking again.
+
 ## 4. Run the face from Android Studio
 
 1. In the run configuration list (top toolbar), pick **Watch face**, and the emulator as the device. Press Run. It installs the face and stops; that's expected.

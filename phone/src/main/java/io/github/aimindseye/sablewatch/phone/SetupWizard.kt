@@ -44,13 +44,13 @@ private enum class Step(val title: Int) {
  * Esc or the system back goes to the previous step; nothing here needs a keyboard.
  */
 @Composable
-internal fun SetupWizard(status: Status?, changed: () -> Unit, refresh: () -> Unit, finish: () -> Unit) {
+internal fun SetupWizard(status: Status?, changed: () -> Unit, refresh: () -> Unit, finish: (close: Boolean) -> Unit) {
     val context = LocalContext.current
     var index by rememberSaveable { mutableIntStateOf(0) }
     val step = Step.entries[index]
     val last = Step.entries.size - 1
     val back: () -> Unit = { if (index > 0) index-- }
-    val next: () -> Unit = { if (index < last) index++ else finish() }
+    val next: () -> Unit = { if (index < last) index++ else finish(true) }
     BackHandler(enabled = index > 0, onBack = back)
     Column(
         Modifier
@@ -79,7 +79,7 @@ internal fun SetupWizard(status: Status?, changed: () -> Unit, refresh: () -> Un
                     Dim(stringResource(R.string.platform_line))
                     Spacer(Modifier.height(8.dp))
                     ActionRow(stringResource(R.string.setup_skip), stringResource(R.string.setup_skip_detail)) {
-                        finish()
+                        finish(false)
                     }
                 }
 

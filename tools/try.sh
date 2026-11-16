@@ -6,6 +6,11 @@
 #   bash tools/try.sh            # phone gets the "generic" build (any Android phone)
 #   bash tools/try.sh sable      # phone gets the SableOS build
 #
+# With SABLEWATCH_KEYSTORE and SABLEWATCH_KEY_ALIAS set (docs/RELEASING.md), it asks for the
+# keystore password once and signs what it installs with the registered key, so TenSeven's Hub
+# counts work and the installs update to and from release APKs. Without them it installs with
+# Android Studio's debug key. Switching keys needs one uninstall, which it offers.
+#
 # Works with the bash that ships on macOS (3.2) and on Linux. Needs nothing beyond Android
 # Studio: it finds adb in the Android SDK and Java in Android Studio if they aren't on PATH.
 set -euo pipefail
@@ -70,6 +75,20 @@ fi
 echo "Watches:${WATCHES:- none}"
 echo "Phones: ${PHONES:- none}"
 
+# --- The registered key, when the release variables are set. ---
+SIGN=no
+if [[ -n "${SABLEWATCH_KEYSTORE:-}" ]] && [[ -n "${SABLEWATCH_KEY_ALIAS:-}" ]]; then
+  [[ -f "$SABLEWATCH_KEYSTORE" ]] || { echo "No keystore at $SABLEWATCH_KEYSTORE" >&2; exit 2; }
+  SDK="$(cd "$(dirname "$ADB")/.." && pwd)"
+  APKSIGNER="$(find "$SDK/build-tools" -mindepth 2 -maxdepth 2 -name apksigner 2>/dev/null | LC_ALL=C sort | tail -n 1)"
+  [[ -n "$APKSIGNER" ]] || { echo "Can't find apksigner under $SDK/build-tools." >&2; exit 2; }
+  EXPECTED_CERT="${SABLEWATCH_EXPECTED_CERT:-9b2047390e5aa77537b8e8875cdfd3c2c72d0a0715e172a7f77457fc4300f292}"
+  read -rsp "Keystore password for $SABLEWATCH_KEYSTORE: " PW; echo
+  SIGNED_DIR="$(mktemp -d)"
+  trap 'rm -rf "$SIGNED_DIR"' EXIT
+  SIGN=yes
+fi
+
 # --- Build only what's needed. ---
 TASKS=""
 [[ -n "$WATCHES" ]] && TASKS="$TASKS :watch:assembleDebug :watchface:assembleDebug"
@@ -87,10 +106,54 @@ if [[ -n "$WATCHES" ]]; then
 fi
 [[ -n "$PHONES" ]] && PHONE_APK="$(first_apk "phone/build/outputs/apk/$FLAVOR/debug")"
 
+# Re-signs an APK with the registered key into SIGNED_DIR and prints the new path.
+signed() {
+  local apk="$1" out
+  out="$SIGNED_DIR/$(basename "$apk")"
+  printf '%s\n' "$PW" | "$APKSIGNER" sign --ks "$SABLEWATCH_KEYSTORE" \
+    --ks-key-alias "$SABLEWATCH_KEY_ALIAS" --ks-pass stdin --out "$out" "$apk" >/dev/null
+  local cert
+  cert="$("$APKSIGNER" verify --print-certs "$out" | sed -n 's/.*certificate SHA-256 digest: //p' | head -n 1)"
+  if [[ "$cert" != "$EXPECTED_CERT" ]]; then
+    echo "$(basename "$apk") is signed with $cert, not the registered key $EXPECTED_CERT." >&2
+    exit 2
+  fi
+  echo "$out"
+}
+if [[ "$SIGN" == yes ]]; then
+  say "Signing with the registered key"
+  if [[ -n "$WATCH_APK" ]]; then WATCH_APK="$(signed "$WATCH_APK")"; fi
+  if [[ -n "$FACE_APK" ]]; then FACE_APK="$(signed "$FACE_APK")"; fi
+  if [[ -n "$PHONE_APK" ]]; then PHONE_APK="$(signed "$PHONE_APK")"; fi
+  unset PW
+fi
+
+# Installs an APK. When the device has the app signed with another key, offers to uninstall it
+# first (that clears the app's settings and permissions), since Android can't update across keys.
+install_apk() {
+  local serial="$1" apk="$2" pkg="$3" result answer
+  if result="$("$ADB" -s "$serial" install -r -t "$apk" 2>&1)"; then return 0; fi
+  case "$result" in
+    *UPDATE_INCOMPATIBLE*|*SIGNATURES_DO_NOT_MATCH*|*signatures\ do\ not\ match*)
+      echo "$pkg on $serial is signed with a different key, so it can't be updated in place."
+      read -rp "Uninstall it and install this one? Its settings and permissions reset. [y/N] " answer
+      if [[ "$answer" == y || "$answer" == Y ]]; then
+        "$ADB" -s "$serial" uninstall "$pkg" >/dev/null
+        "$ADB" -s "$serial" install -r -t "$apk" >/dev/null
+      else
+        echo "Skipped $pkg on $serial." >&2
+        return 1
+      fi
+      ;;
+    *) echo "$result" >&2; return 1 ;;
+  esac
+}
+APP_PKG=io.github.aimindseye.sablewatch
+
 for serial in $WATCHES; do
   say "Watch $serial: installing the watch app and the face"
-  "$ADB" -s "$serial" install -r -t "$WATCH_APK" >/dev/null
-  "$ADB" -s "$serial" install -r -t "$FACE_APK" >/dev/null
+  install_apk "$serial" "$WATCH_APK" "$APP_PKG" || continue
+  install_apk "$serial" "$FACE_APK" "$FACE_PKG" || continue
   # The same broadcast Android Studio's watch-face run uses to make a face active.
   if "$ADB" -s "$serial" shell am broadcast \
       -a com.google.android.wearable.app.DEBUG_SURFACE \
@@ -103,8 +166,8 @@ done
 
 for serial in $PHONES; do
   say "Phone $serial: installing the phone app ($FLAVOR)"
-  "$ADB" -s "$serial" install -r -t "$PHONE_APK" >/dev/null
-  "$ADB" -s "$serial" shell monkey -p io.github.aimindseye.sablewatch \
+  install_apk "$serial" "$PHONE_APK" "$APP_PKG" || continue
+  "$ADB" -s "$serial" shell monkey -p "$APP_PKG" \
     -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1 || true
   echo "Opened Sable Watch on the phone."
 done

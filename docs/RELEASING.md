@@ -44,4 +44,4 @@ io.github.aimindseye.sablewatch.face     the watch face
 
 Registration links a package name to a signing certificate's SHA-256; it doesn't list APKs. The watch app and both phone builds have the same name and the same key, so one registration should cover all three. Google's guide doesn't mention Wear OS specifically, so check the console's answer when you register. The face needs its own name because a Watch Face Format face must be a separate, code-free APK. The key is already verified for the Sable Games names, and Google says reusing a verified key for more names in the same account skips the APK upload step.
 
-Not registered yet (2026-11-14).
+Both names are registered with the key above (2026-11-16). `bash tools/try.sh` signs with it too when the two variables are set (see [Getting started](GETTING_STARTED.md)).
