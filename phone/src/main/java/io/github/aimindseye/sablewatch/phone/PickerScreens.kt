@@ -43,8 +43,8 @@ internal fun CitiesScreen(modifier: Modifier, changed: () -> Unit) {
     SearchField(query, stringResource(R.string.cities_search), modifier) { query = it }
     if (query.isNotBlank()) {
         CityLabels.search(query).forEach { city ->
-            ActionRow(CityLabels.cityName(city.zone.id), city.label) {
-                cities = (cities.filterNot { it.zone == city.zone } + city).takeLast(WorldClock.MAX_CITIES)
+            ActionRow(CityLabels.cityName(city), city.label) {
+                cities = (cities - city + city).takeLast(WorldClock.MAX_CITIES)
                 settings.cities = cities
                 query = ""
                 changed()
@@ -52,7 +52,7 @@ internal fun CitiesScreen(modifier: Modifier, changed: () -> Unit) {
         }
     }
     cities.forEach { city ->
-        ActionRow("${city.label}  ${CityLabels.cityName(city.zone.id)}", stringResource(R.string.remove)) {
+        ActionRow("${city.label}  ${CityLabels.cityName(city)}", stringResource(R.string.remove)) {
             cities = (cities - city).ifEmpty { WorldClock.DEFAULT_CITIES }
             settings.cities = cities
             changed()

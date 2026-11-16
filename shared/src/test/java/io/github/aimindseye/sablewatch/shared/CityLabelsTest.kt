@@ -28,4 +28,18 @@ class CityLabelsTest {
         assertTrue(CityLabels.search("  ").isEmpty())
         assertTrue(CityLabels.search("a", limit = 5).size <= 5)
     }
+
+    @Test
+    fun `search finds big cities that aren't zone names`() {
+        val mumbai = CityLabels.search("mumb").first()
+        assertEquals(WorldCity("BOM", java.time.ZoneId.of("Asia/Kolkata")), mumbai)
+        assertEquals("Mumbai", CityLabels.cityName(mumbai))
+        assertEquals("DEL", CityLabels.search("delhi").first().label)
+        assertEquals("BLR", CityLabels.search("bangalore").first().label)
+    }
+
+    @Test
+    fun `zone cities keep their own name`() {
+        assertEquals("Kolkata", CityLabels.cityName(CityLabels.search("kolk").first()))
+    }
 }
