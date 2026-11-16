@@ -60,7 +60,16 @@ class UnreadListenerService : NotificationListenerService() {
         lastCount = runCatching { activeNotifications.orEmpty().sumOf(::countOf) }.getOrNull()
     }
 
-    private fun countOf(sbn: StatusBarNotification): Int = if (isMessage(sbn)) itemCount(sbn) else 0
+    /** Counted the way the watch's Hub list picks items when Hub can't be read, so the two agree. */
+    private fun countOf(sbn: StatusBarNotification): Int = if (inHub(sbn, emptySet())) itemCount(sbn) else 0
+
+    /**
+     * Hub items: message notifications, plus any notification from an app Hub is counting right
+     * now ([hubApps]), so the list matches Hub even for apps that don't mark their notifications
+     * as messages; without Hub, any alerting notification.
+     */
+    private fun inHub(sbn: StatusBarNotification, hubApps: Set<String>): Boolean =
+        isMessage(sbn) || if (hubApps.isEmpty()) isAlerting(sbn) else isFromHubApp(sbn, hubApps)
 
     private fun itemCount(sbn: StatusBarNotification): Int = sbn.notification.number.takeIf { it > 0 } ?: 1
 
@@ -92,17 +101,9 @@ class UnreadListenerService : NotificationListenerService() {
         return !sbn.isOngoing && !isSummary && isMessage && sbn.packageName != packageName
     }
 
-    /**
-     * Hub items: message notifications, plus any notification from an app Hub is counting right
-     * now ([hubApps]), so the list matches Hub even for apps that don't mark their notifications
-     * as messages. Secret (hidden on the lock screen) ones are left out.
-     */
+    /** The watch's Hub list ([inHub]); secret (hidden on the lock screen) ones are left out. */
     private fun hubItems(hubApps: Set<String>): List<HubItem> = activeNotifications.orEmpty()
-        .filter { sbn ->
-            val included = isMessage(sbn) ||
-                if (hubApps.isEmpty()) isAlerting(sbn) else isFromHubApp(sbn, hubApps)
-            included && sbn.notification.visibility != Notification.VISIBILITY_SECRET
-        }
+        .filter { sbn -> inHub(sbn, hubApps) && sbn.notification.visibility != Notification.VISIBILITY_SECRET }
         .map { sbn ->
             val extras = sbn.notification.extras
 

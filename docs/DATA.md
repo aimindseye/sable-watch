@@ -7,7 +7,7 @@ and battery never involve the phone.
 | Watch shows | SableOS build (`sable`) | Any phone (`generic`, e.g. Titan 2 with TenSeven) |
 |---|---|---|
 | Messages count | Sable Hub `content://org.sableos.hub.snapshot/apps` | TenSeven Hub `content://io.github.aimindseye.tenseven.hubcounts/apps` |
-| (fallback) | Notification count, if notification access is on | Notification count, if notification access is on |
+| (fallback) | Notifications the watch Hub list would show, if notification access is on | The same |
 | Agenda Peek | Sable Calendar `content://org.sableos.calendar.snapshot/next` | The phone's calendars (`READ_CALENDAR`) |
 | (fallback) | The phone's calendars | none |
 | Weather | Sable Weather `content://org.sableos.weather.snapshot/current` | Open-Meteo for the city picked in the app |
@@ -21,7 +21,7 @@ sender or notification content. "Show every event as Busy" hides titles too.
 
 "Hub on the watch", in the app's Messages section and off by default, adds a BB10-style Hub list
 on the watch, opened by tapping the Hub bubble. With it on, the phone also sends, at
-`/sablewatch/hub`, the newest 20 Hub notifications: message notifications, plus any from an app
+`/sablewatch/hub`, the newest 50 Hub notifications: message notifications, plus any from an app
 Hub is counting (or, when Hub can't be read, any clearable notification that alerts). For each:
 
 - the app's name, the sender (or group name), and the first 120 characters of the latest message;
