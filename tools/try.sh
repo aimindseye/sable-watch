@@ -22,24 +22,24 @@ FACE_PKG=io.github.aimindseye.sablewatch.face
 say() { printf '\n==> %s\n' "$*"; }
 
 # --- Java: Gradle needs a JDK 17-24. Android Studio's own one is fine. ---
-if [ -z "${JAVA_HOME:-}" ]; then
+if [[ -z "${JAVA_HOME:-}" ]]; then
   for jbr in \
     "/Applications/Android Studio.app/Contents/jbr/Contents/Home" \
     "$HOME/Applications/Android Studio.app/Contents/jbr/Contents/Home" \
     "/opt/android-studio/jbr" \
     "$HOME/android-studio/jbr"; do
-    if [ -x "$jbr/bin/java" ]; then export JAVA_HOME="$jbr"; break; fi
+    if [[ -x "$jbr/bin/java" ]]; then export JAVA_HOME="$jbr"; break; fi
   done
 fi
 
 # --- adb: on PATH, or in the SDK that Android Studio installed. ---
 ADB="$(command -v adb || true)"
-if [ -z "$ADB" ]; then
+if [[ -z "$ADB" ]]; then
   for sdk in "${ANDROID_HOME:-}" "${ANDROID_SDK_ROOT:-}" "$HOME/Library/Android/sdk" "$HOME/Android/Sdk"; do
-    if [ -n "$sdk" ] && [ -x "$sdk/platform-tools/adb" ]; then ADB="$sdk/platform-tools/adb"; break; fi
+    if [[ -n "$sdk" ]] && [[ -x "$sdk/platform-tools/adb" ]]; then ADB="$sdk/platform-tools/adb"; break; fi
   done
 fi
-if [ -z "$ADB" ]; then
+if [[ -z "$ADB" ]]; then
   echo "Can't find adb. Open Android Studio once (it installs the SDK), then try again." >&2
   exit 1
 fi
@@ -54,7 +54,7 @@ for serial in $("$ADB" devices | awk 'NR > 1 && $2 == "device" { print $1 }'); d
     *) PHONES="$PHONES $serial" ;;
   esac
 done
-if [ -z "$WATCHES$PHONES" ]; then
+if [[ -z "$WATCHES$PHONES" ]]; then
   echo "No device is connected. Start the Wear OS emulator (and a phone emulator, if you" >&2
   echo "want the phone side too) from Android Studio's Device Manager, then run this again." >&2
   exit 1
@@ -64,16 +64,20 @@ echo "Phones: ${PHONES:- none}"
 
 # --- Build only what's needed. ---
 TASKS=""
-[ -n "$WATCHES" ] && TASKS="$TASKS :watch:assembleDebug :watchface:assembleDebug"
-[ -n "$PHONES" ] && TASKS="$TASKS :phone:assemble$VARIANT"
+[[ -n "$WATCHES" ]] && TASKS="$TASKS :watch:assembleDebug :watchface:assembleDebug"
+[[ -n "$PHONES" ]] && TASKS="$TASKS :phone:assemble$VARIANT"
 say "Building$TASKS"
 # shellcheck disable=SC2086 # TASKS is a list of words on purpose.
 ./gradlew --quiet $TASKS
 
-first_apk() { find "$1" -name '*.apk' -print | head -n 1; }
-WATCH_APK="$(first_apk watch/build/outputs/apk/debug)"
-FACE_APK="$(first_apk watchface/build/outputs/apk/debug)"
-PHONE_APK="$(first_apk "phone/build/outputs/apk/$FLAVOR/debug")"
+# Only the APKs that were just built exist, so look them up only when a device needs them.
+first_apk() { local dir="$1"; find "$dir" -name '*.apk' -print 2>/dev/null | head -n 1; }
+WATCH_APK=""; FACE_APK=""; PHONE_APK=""
+if [[ -n "$WATCHES" ]]; then
+  WATCH_APK="$(first_apk watch/build/outputs/apk/debug)"
+  FACE_APK="$(first_apk watchface/build/outputs/apk/debug)"
+fi
+[[ -n "$PHONES" ]] && PHONE_APK="$(first_apk "phone/build/outputs/apk/$FLAVOR/debug")"
 
 for serial in $WATCHES; do
   say "Watch $serial: installing the watch app and the face"
@@ -98,7 +102,7 @@ for serial in $PHONES; do
 done
 
 say "Done"
-if [ -n "$WATCHES" ] && [ -z "$PHONES" ]; then
+if [[ -n "$WATCHES" ]] && [[ -z "$PHONES" ]]; then
   echo "Only a watch is connected, so Hub counts, Agenda Peek, World Clock and weather stay"
   echo "empty. Pair a phone emulator (Device Manager > watch > Pair Wearable) to see them."
 fi
