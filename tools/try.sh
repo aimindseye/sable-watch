@@ -70,10 +70,14 @@ say "Building$TASKS"
 # shellcheck disable=SC2086 # TASKS is a list of words on purpose.
 ./gradlew --quiet $TASKS
 
-first_apk() { find "$1" -name '*.apk' -print | head -n 1; }
-WATCH_APK="$(first_apk watch/build/outputs/apk/debug)"
-FACE_APK="$(first_apk watchface/build/outputs/apk/debug)"
-PHONE_APK="$(first_apk "phone/build/outputs/apk/$FLAVOR/debug")"
+# Only the APKs that were just built exist, so look them up only when a device needs them.
+first_apk() { find "$1" -name '*.apk' -print 2>/dev/null | head -n 1; }
+WATCH_APK=""; FACE_APK=""; PHONE_APK=""
+if [ -n "$WATCHES" ]; then
+  WATCH_APK="$(first_apk watch/build/outputs/apk/debug)"
+  FACE_APK="$(first_apk watchface/build/outputs/apk/debug)"
+fi
+[ -n "$PHONES" ] && PHONE_APK="$(first_apk "phone/build/outputs/apk/$FLAVOR/debug")"
 
 for serial in $WATCHES; do
   say "Watch $serial: installing the watch app and the face"
