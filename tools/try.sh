@@ -14,6 +14,7 @@
 # Works with the bash that ships on macOS (3.2) and on Linux. Needs nothing beyond Android
 # Studio: it finds adb in the Android SDK and Java in Android Studio if they aren't on PATH.
 set -euo pipefail
+trap 'echo "try.sh stopped at line $LINENO (exit $?)." >&2' ERR
 
 cd "$(dirname "$0")/.."
 FLAVOR="${1:-generic}"
@@ -79,9 +80,20 @@ echo "Phones: ${PHONES:- none}"
 SIGN=no
 if [[ -n "${SABLEWATCH_KEYSTORE:-}" ]] && [[ -n "${SABLEWATCH_KEY_ALIAS:-}" ]]; then
   [[ -f "$SABLEWATCH_KEYSTORE" ]] || { echo "No keystore at $SABLEWATCH_KEYSTORE" >&2; exit 2; }
-  SDK="$(cd "$(dirname "$ADB")/.." && pwd)"
-  APKSIGNER="$(find "$SDK/build-tools" -mindepth 2 -maxdepth 2 -name apksigner 2>/dev/null | LC_ALL=C sort | tail -n 1)"
-  [[ -n "$APKSIGNER" ]] || { echo "Can't find apksigner under $SDK/build-tools." >&2; exit 2; }
+  # apksigner is in the SDK's build-tools. adb may come from elsewhere (Homebrew, say), so try
+  # the usual SDK places as well as the one adb sits in.
+  APKSIGNER=""
+  LOCAL_SDK="$(sed -n 's/^sdk\.dir=//p' local.properties 2>/dev/null || true)"
+  for sdk in "${ANDROID_HOME:-}" "${ANDROID_SDK_ROOT:-}" "$LOCAL_SDK" \
+      "$HOME/Library/Android/sdk" "$HOME/Android/Sdk" "$(dirname "$(dirname "$ADB")")"; do
+    [[ -n "$sdk" ]] && [[ -d "$sdk/build-tools" ]] || continue
+    APKSIGNER="$(find "$sdk/build-tools" -mindepth 2 -maxdepth 2 -name apksigner 2>/dev/null | LC_ALL=C sort | tail -n 1 || true)"
+    [[ -n "$APKSIGNER" ]] && break
+  done
+  if [[ -z "$APKSIGNER" ]]; then
+    echo "Can't find apksigner. Install Android SDK Build-Tools in Android Studio's SDK Manager." >&2
+    exit 2
+  fi
   EXPECTED_CERT="${SABLEWATCH_EXPECTED_CERT:-9b2047390e5aa77537b8e8875cdfd3c2c72d0a0715e172a7f77457fc4300f292}"
   read -rsp "Keystore password for $SABLEWATCH_KEYSTORE: " PW; echo
   SIGNED_DIR="$(mktemp -d)"
