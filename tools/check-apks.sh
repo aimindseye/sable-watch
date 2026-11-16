@@ -20,6 +20,8 @@ aapt2="$(find "$sdk/build-tools" -maxdepth 2 \( -name aapt2 -o -name aapt2.exe \
 apksigner="$(dirname "$aapt2")/apksigner"
 [[ -e "$apksigner" ]] || apksigner="$apksigner.bat"
 
+# The watch app's one permission: INTERNET, for Open-Meteo weather for the phone's weather city
+# when the phone has been away for over an hour.
 # The phone app's permissions, and why:
 #   READ_CALENDAR      Agenda Peek from the phone's calendars (asked for on the Agenda screen)
 #   INTERNET           Open-Meteo weather for the city the user picks
@@ -33,7 +35,7 @@ phone_perms="android.permission.READ_CALENDAR android.permission.INTERNET androi
 # name|glob|package|allowed permissions (space separated)
 apps=(
     "watchface|watchface/build/outputs/apk/release/*.apk sable-watchface-*.apk|io.github.aimindseye.sablewatch.face|"
-    "watch|watch/build/outputs/apk/release/*.apk sable-watch-wear-*.apk|io.github.aimindseye.sablewatch|"
+    "watch|watch/build/outputs/apk/release/*.apk sable-watch-wear-*.apk|io.github.aimindseye.sablewatch|android.permission.INTERNET"
     "phone-sable|phone/build/outputs/apk/sable/release/*.apk sable-watch-phone-sable-*.apk|io.github.aimindseye.sablewatch|$phone_perms"
     "phone-generic|phone/build/outputs/apk/generic/release/*.apk sable-watch-phone-generic-*.apk|io.github.aimindseye.sablewatch|$phone_perms io.github.aimindseye.tenseven.permission.READ_HUB_COUNTS"
 )

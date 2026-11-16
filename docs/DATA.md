@@ -46,7 +46,23 @@ the setting off deletes the list from the watch. Nothing is stored on the phone.
   change (needs notification access, which keeps the listener running).
 - When the next event ends, so the arc moves on to the one after it.
 - Every 15 minutes, and when Sync now (or `S`) is pressed.
-- Nothing is sent when nothing changed, except for Sync now.
+- When the watch asks: opening Sable Hub on the watch, or its Refresh button, sends a
+  `/sablewatch/refresh` message (no data) and the phone syncs at once.
+- Nothing is sent when nothing changed, except for Sync now, a refresh from the watch, and once
+  every 30 minutes, so the watch can tell "nothing new" from "the phone is away".
+
+## When the phone is away
+
+The Data Layer also works through Google's cloud when both have internet (Galaxy Wearable >
+Remote connection), so updates keep coming without Bluetooth. With no connection at all:
+
+- The clock, date, steps, battery, heart rate and world clock carry on; they are computed on the
+  watch.
+- After an hour without the phone, the watch fetches Open-Meteo itself for the phone's weather
+  city (its coordinates come with each update; never the watch's location), at most every 30
+  minutes, if the watch has its own Wi-Fi or LTE.
+- After two hours, the Hub bubble's icon changes to a struck-through bubble: the count is the
+  last one the phone sent, not a live one.
 
 ## Default complications
 

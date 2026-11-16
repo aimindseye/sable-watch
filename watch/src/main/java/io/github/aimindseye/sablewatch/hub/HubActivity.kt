@@ -25,21 +25,32 @@ import io.github.aimindseye.sablewatch.R
 import io.github.aimindseye.sablewatch.open.OpenOnPhoneActivity
 import io.github.aimindseye.sablewatch.shared.HubItem
 import io.github.aimindseye.sablewatch.shared.WatchContract
+import io.github.aimindseye.sablewatch.sync.PhoneRefresh
 import io.github.aimindseye.sablewatch.sync.StateStore
 import java.util.Date
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * The BB10-style Hub on the watch: the latest conversations, newest first, with the app, who
  * wrote and the start of the message. Tapping one opens it on the phone to read in full and
- * reply. Shown only when "Hub on the watch" is on in the phone app; otherwise it says how to
- * turn it on and offers to open Hub on the phone.
+ * reply. Opening it (or Refresh) asks the phone to sync now. The list shows only when "Hub on
+ * the watch" is on in the phone app; otherwise it says how to turn it on.
  */
 class HubActivity : Activity() {
     private lateinit var scroll: ScrollView
     private lateinit var list: LinearLayout
     private val store by lazy { StateStore(this) }
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> render() }
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var status = ""
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+        status = ""
+        render()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +72,25 @@ class HubActivity : Activity() {
     override fun onResume() {
         super.onResume()
         render()
+        refresh()
         store.listen(listener)
         scroll.requestFocus()
+    }
+
+    /** Asks the phone for a sync; the new list arrives through the store and redraws. */
+    private fun refresh() {
+        status = getString(R.string.hub_refreshing)
+        render()
+        scope.launch {
+            val asked = PhoneRefresh.request(this@HubActivity)
+            status = if (asked) "" else getString(R.string.phone_not_reachable)
+            render()
+        }
+    }
+
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
     }
 
     override fun onPause() {
@@ -86,14 +114,15 @@ class HubActivity : Activity() {
         val items = store.loadHub()
         val unread = items?.sumOf { it.count } ?: 0
         list.addView(text(getString(R.string.hub_title), TITLE_SP, ACCENT, bold = true, center = true))
-        list.addView(
-            text(
-                if (items == null) "" else resources.getQuantityString(R.plurals.hub_unread, unread, unread),
-                SMALL_SP,
-                DIM,
-                center = true
-            )
-        )
+        val updated = store.load().updatedAtMillis
+        val summary = listOfNotNull(
+            items?.let { resources.getQuantityString(R.plurals.hub_unread, unread, unread) },
+            status.ifEmpty { null } ?: updated.takeIf { it > 0 }?.let {
+                DateUtils.getRelativeTimeSpanString(it, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                    .toString()
+            }
+        ).joinToString(" · ")
+        list.addView(text(summary, SMALL_SP, DIM, center = true))
         when {
             items == null -> list.addView(text(getString(R.string.hub_off), BODY_SP, DIM, center = true, top = GAP_DP))
 
@@ -103,6 +132,7 @@ class HubActivity : Activity() {
 
             else -> items.forEach { list.addView(row(it)) }
         }
+        list.addView(button(getString(R.string.hub_refresh), primary = false) { refresh() })
         list.addView(button(getString(R.string.hub_open_on_phone)) { openOnPhone(WatchContract.OPEN_HUB) })
     }
 
@@ -135,16 +165,22 @@ class HubActivity : Activity() {
         setOnClickListener { openOnPhone("${WatchContract.OPEN_MESSAGE}/${item.id}") }
     }
 
-    private fun button(label: String, onClick: () -> Unit): View =
-        text(label, BODY_SP, Color.BLACK, bold = true, center = true, top = GAP_DP).apply {
-            setPadding(dp(ROW_PAD_DP), dp(BUTTON_PAD_DP), dp(ROW_PAD_DP), dp(BUTTON_PAD_DP))
-            background = GradientDrawable().apply {
-                setColor(ACCENT)
-                cornerRadius = dp(BUTTON_RADIUS_DP).toFloat()
-            }
-            isClickable = true
-            setOnClickListener { onClick() }
+    private fun button(label: String, primary: Boolean = true, onClick: () -> Unit): View = text(
+        label,
+        BODY_SP,
+        if (primary) Color.BLACK else Color.WHITE,
+        bold = true,
+        center = true,
+        top = GAP_DP
+    ).apply {
+        setPadding(dp(ROW_PAD_DP), dp(BUTTON_PAD_DP), dp(ROW_PAD_DP), dp(BUTTON_PAD_DP))
+        background = GradientDrawable().apply {
+            setColor(if (primary) ACCENT else ROW)
+            cornerRadius = dp(BUTTON_RADIUS_DP).toFloat()
         }
+        isClickable = true
+        setOnClickListener { onClick() }
+    }
 
     private fun openOnPhone(target: String) {
         startActivity(OpenOnPhoneActivity.intent(this, target))

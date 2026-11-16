@@ -56,6 +56,11 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_SETUP_DONE, false)
         set(value) = prefs.edit { putBoolean(KEY_SETUP_DONE, value) }
 
+    /** When the state was last put in the Data Layer (not just checked). */
+    var lastSentMillis: Long
+        get() = prefs.getLong(KEY_LAST_SENT, 0L)
+        set(value) = prefs.edit { putLong(KEY_LAST_SENT, value) }
+
     var lastSyncMillis: Long
         get() = prefs.getLong(KEY_LAST_SYNC, 0L)
         set(value) = prefs.edit { putLong(KEY_LAST_SYNC, value) }
@@ -132,6 +137,7 @@ class Settings(context: Context) {
         private const val KEY_SKIP_ALL_DAY = "agenda_skip_all_day"
         private const val KEY_LAST_SYNC = "last_sync"
         private const val KEY_SETUP_DONE = "setup_done"
+        private const val KEY_LAST_SENT = "last_sent"
         private const val KEY_HUB_ON_WATCH = "hub_on_watch"
         private const val KEY_WEATHER_PLACE = "weather_place"
         private const val KEY_WEATHER_CACHE = "weather_cache"

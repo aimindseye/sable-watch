@@ -1,5 +1,6 @@
 package io.github.aimindseye.sablewatch.phone.data
 
+import io.github.aimindseye.sablewatch.shared.OpenMeteoApi
 import io.github.aimindseye.sablewatch.shared.Weather
 import java.net.URL
 import java.net.URLEncoder
@@ -17,21 +18,14 @@ data class WeatherPlace(val name: String, val detail: String, val latitude: Doub
  */
 object OpenMeteo {
     private const val GEOCODING = "https://geocoding-api.open-meteo.com/v1/search"
-    private const val FORECAST = "https://api.open-meteo.com/v1/forecast"
     private const val TIMEOUT_MS = 10_000
     private const val MAX_RESULTS = 8
 
     fun searchUrl(query: String, language: String): String =
         "$GEOCODING?name=${URLEncoder.encode(query.trim(), "UTF-8")}&count=$MAX_RESULTS&language=$language&format=json"
 
-    fun forecastUrl(place: WeatherPlace, fahrenheit: Boolean): String = String.format(
-        Locale.ROOT,
-        "%s?latitude=%.4f&longitude=%.4f&current=temperature_2m,weather_code&temperature_unit=%s&timezone=auto",
-        FORECAST,
-        place.latitude,
-        place.longitude,
-        if (fahrenheit) "fahrenheit" else "celsius"
-    )
+    fun forecastUrl(place: WeatherPlace, fahrenheit: Boolean): String =
+        OpenMeteoApi.forecastUrl(place.latitude, place.longitude, fahrenheit)
 
     /** Cities matching [query]; empty when there are none or the request failed. */
     fun search(query: String, language: String = Locale.getDefault().language): List<WeatherPlace> {
@@ -64,19 +58,7 @@ object OpenMeteo {
         )
     }
 
-    /** A short label for a WMO weather code, as Open-Meteo reports it. */
-    @Suppress("MagicNumber") // The WMO code table.
-    fun condition(code: Int): String = when (code) {
-        0 -> "Clear"
-        1, 2 -> "Partly cloudy"
-        3 -> "Cloudy"
-        45, 48 -> "Fog"
-        in 51..57 -> "Drizzle"
-        in 61..67, in 80..82 -> "Rain"
-        in 71..77, 85, 86 -> "Snow"
-        in 95..99 -> "Storm"
-        else -> ""
-    }
+    fun condition(code: Int): String = OpenMeteoApi.condition(code)
 
     private fun get(url: String): JSONObject? = runCatching {
         val connection = URL(url).openConnection() as HttpsURLConnection

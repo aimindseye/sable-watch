@@ -14,6 +14,12 @@ data class NextEvent(
 /** The phone's current weather, for the weather bubble. [unit] is "C" or "F". */
 data class Weather(val temperature: Int, val unit: String, val condition: String, val place: String)
 
+/**
+ * The weather city's coordinates (the city the user picked, never the phone's location), so the
+ * watch can fetch Open-Meteo itself when the phone's last update is old.
+ */
+data class WeatherSpot(val latitude: Double, val longitude: Double, val name: String, val fahrenheit: Boolean)
+
 /** Where the unread count came from, so the phone app can say it. */
 enum class UnreadSource { HUB, NOTIFICATIONS }
 
@@ -27,6 +33,7 @@ data class WatchState(
     val unread: Int? = null,
     val unreadSource: UnreadSource? = null,
     val weather: Weather? = null,
+    val weatherSpot: WeatherSpot? = null,
     val updatedAtMillis: Long = 0L
 )
 
@@ -37,6 +44,15 @@ data class WatchState(
  */
 object WatchContract {
     const val PATH_STATE = "/sablewatch/state"
+
+    /** A message from the watch asking the phone to sync now (the watch's Refresh). */
+    const val PATH_REFRESH = "/sablewatch/refresh"
+
+    /** After this long without the phone, the watch fetches weather itself when it can. */
+    const val WATCH_WEATHER_AFTER_MS = 60 * 60_000L
+
+    /** After this long without the phone, the Hub bubble shows a "not live" icon. */
+    const val STALE_AFTER_MS = 2 * 60 * 60_000L
 
     /**
      * Links the watch opens on the phone when a bubble is tapped (`sablewatch://open/<target>`).
@@ -66,6 +82,10 @@ object WatchContract {
     const val KEY_WEATHER_UNIT = "weather_unit"
     const val KEY_WEATHER_CONDITION = "weather_condition"
     const val KEY_WEATHER_PLACE = "weather_place"
+    const val KEY_SPOT_LAT = "spot_lat"
+    const val KEY_SPOT_LON = "spot_lon"
+    const val KEY_SPOT_NAME = "spot_name"
+    const val KEY_SPOT_FAHRENHEIT = "spot_fahrenheit"
     const val KEY_UPDATED_AT = "updated_at"
 
     private const val CITY_SEPARATOR = '|'
@@ -87,7 +107,20 @@ object WatchContract {
             put(KEY_WEATHER_CONDITION, it.condition)
             put(KEY_WEATHER_PLACE, it.place)
         }
+        state.weatherSpot?.let {
+            // Strings: the contract carries no floating-point type.
+            put(KEY_SPOT_LAT, it.latitude.toString())
+            put(KEY_SPOT_LON, it.longitude.toString())
+            put(KEY_SPOT_NAME, it.name)
+            put(KEY_SPOT_FAHRENHEIT, it.fahrenheit)
+        }
         put(KEY_UPDATED_AT, state.updatedAtMillis)
+    }
+
+    private fun spot(map: Map<String, Any?>): WeatherSpot? {
+        val lat = (map[KEY_SPOT_LAT] as? String)?.toDoubleOrNull() ?: return null
+        val lon = (map[KEY_SPOT_LON] as? String)?.toDoubleOrNull() ?: return null
+        return WeatherSpot(lat, lon, map[KEY_SPOT_NAME] as? String ?: "", map[KEY_SPOT_FAHRENHEIT] as? Boolean ?: false)
     }
 
     fun decode(map: Map<String, Any?>): WatchState {
@@ -120,6 +153,7 @@ object WatchContract {
             unreadSource = (map[KEY_UNREAD_SOURCE] as? String)
                 ?.let { name -> UnreadSource.entries.firstOrNull { it.name == name } },
             weather = weather,
+            weatherSpot = spot(map),
             updatedAtMillis = map[KEY_UPDATED_AT] as? Long ?: 0L
         )
     }

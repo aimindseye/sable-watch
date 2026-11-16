@@ -16,5 +16,8 @@
     </plurals>
     <string name="hub_empty">No new messages</string>
     <string name="hub_off">To see your messages here, turn on Hub on the watch in Sable Watch on your phone (Messages).</string>
+    <string name="hub_app_label">Sable Hub</string>
+    <string name="hub_refresh">Refresh</string>
+    <string name="hub_refreshing">Asking phone…</string>
     <string name="hub_open_on_phone">Open Hub on phone</string>
 </resources>

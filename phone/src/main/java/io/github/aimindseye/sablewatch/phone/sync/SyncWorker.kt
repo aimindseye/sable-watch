@@ -26,7 +26,10 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         val state = PhoneData(applicationContext).read(settings, now)
         val fingerprint = WatchContract.encode(state.copy(updatedAtMillis = 0L)).toSortedMap().toString().hashCode()
         val force = inputData.getBoolean(KEY_FORCE, false)
-        if (force || fingerprint != settings.lastFingerprint) {
+        // Unchanged state is still re-sent every half hour, so the watch can tell "nothing new"
+        // from "the phone is gone" (it fetches weather itself and marks Hub as not live).
+        val due = now - settings.lastSentMillis >= RESEND_MS
+        if (force || due || fingerprint != settings.lastFingerprint) {
             val nodes = runCatching { StateSender.send(applicationContext, state) }
                 .onFailure { Log.w(TAG, "Could not reach the Wear OS Data Layer", it) }
                 .getOrElse {
@@ -34,6 +37,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                     return if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
                 }
             settings.lastFingerprint = fingerprint
+            settings.lastSentMillis = now
             settings.lastSyncNodes = nodes
         }
         // The opt-in Hub list. The Data Layer drops a put that changes nothing, so it is sent
@@ -65,6 +69,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         private const val BOUNDARY_SLACK_MS = 5_000L
         private const val MAX_BOUNDARY_MS = 24 * 3_600_000L
         private const val PERIOD_MINUTES = 15L
+        private const val RESEND_MS = 30 * 60_000L
 
         fun schedulePeriodic(context: Context) {
             val request = PeriodicWorkRequestBuilder<SyncWorker>(PERIOD_MINUTES, TimeUnit.MINUTES).build()
