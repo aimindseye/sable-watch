@@ -12,6 +12,8 @@ import androidx.wear.watchface.complications.datasource.SuspendingTimelineCompli
 import androidx.wear.watchface.complications.datasource.TimeInterval
 import androidx.wear.watchface.complications.datasource.TimelineEntry
 import io.github.aimindseye.sablewatch.R
+import io.github.aimindseye.sablewatch.open.OpenOnPhoneActivity
+import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.shared.WorldClock
 import io.github.aimindseye.sablewatch.sync.StateStore
 import java.time.Instant
@@ -51,12 +53,12 @@ class WorldClockDataSource : SuspendingTimelineComplicationDataSourceService() {
             ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(
                 PlainComplicationText.Builder(WorldClock.line(cities, at, use24Hour)).build(),
                 description
-            ).build()
+            ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_CITIES)).build()
 
             ComplicationType.SHORT_TEXT -> ShortTextComplicationData.Builder(
                 PlainComplicationText.Builder(WorldClock.short(cities, at, use24Hour)).build(),
                 description
-            ).build()
+            ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_CITIES)).build()
 
             else -> null
         }

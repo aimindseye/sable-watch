@@ -7,4 +7,11 @@
     <string name="slot_heart_rate">Heart rate</string>
     <string name="slot_battery">Battery</string>
     <string name="slot_steps">Steps</string>
+    <string name="accent_label">Colour</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_green">Green</string>
+    <string name="color_amber">Amber</string>
+    <string name="color_red">Red</string>
+    <string name="color_violet">Violet</string>
+    <string name="color_white">White</string>
 </resources>

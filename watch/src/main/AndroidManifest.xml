@@ -104,6 +104,14 @@
                 android:value="io.github.aimindseye.sablewatch.face" />
         </service>
 
+        <!-- A tapped Sable bubble: asks the phone to open the matching screen, then closes. -->
+        <activity
+            android:name=".open.OpenOnPhoneActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="" />
+
         <!-- The phone's state over the Wear OS Data Layer. -->
         <service
             android:name=".sync.StateListenerService"

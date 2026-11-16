@@ -10,6 +10,8 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import io.github.aimindseye.sablewatch.R
+import io.github.aimindseye.sablewatch.open.OpenOnPhoneActivity
+import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.sync.StateStore
 
 /**
@@ -32,7 +34,7 @@ class MessagesDataSource : SuspendingComplicationDataSourceService() {
             PlainComplicationText.Builder(getString(R.string.messages_description, unread)).build()
         ).setMonochromaticImage(
             MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_hub)).build()
-        ).build()
+        ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_HUB)).build()
     }
 
     private companion object {

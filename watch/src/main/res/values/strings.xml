@@ -6,4 +6,7 @@
     <string name="messages_label">Sable Hub</string>
     <string name="messages_description">%1$d unread in Hub</string>
     <string name="weather_label">Sable Weather</string>
+    <string name="opening_on_phone">Opening on phone…</string>
+    <string name="opened_on_phone">Open your phone</string>
+    <string name="phone_not_reachable">Phone not connected</string>
 </resources>

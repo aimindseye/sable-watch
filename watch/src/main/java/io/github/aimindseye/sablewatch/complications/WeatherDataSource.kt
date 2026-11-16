@@ -10,6 +10,8 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import io.github.aimindseye.sablewatch.R
+import io.github.aimindseye.sablewatch.open.OpenOnPhoneActivity
+import io.github.aimindseye.sablewatch.shared.WatchContract
 import io.github.aimindseye.sablewatch.shared.Weather
 import io.github.aimindseye.sablewatch.sync.StateStore
 
@@ -30,6 +32,6 @@ class WeatherDataSource : SuspendingComplicationDataSourceService() {
             PlainComplicationText.Builder(description.ifBlank { getString(R.string.weather_label) }).build()
         ).setMonochromaticImage(
             MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_weather)).build()
-        ).build()
+        ).setTapAction(OpenOnPhoneActivity.tapAction(this, WatchContract.OPEN_WEATHER)).build()
     }
 }

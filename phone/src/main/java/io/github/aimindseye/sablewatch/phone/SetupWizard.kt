@@ -95,9 +95,13 @@ internal fun SetupWizard(status: Status?, changed: () -> Unit, refresh: () -> Un
                 }
 
                 Step.MESSAGES -> MessagesScreen(status, focusFirst)
+
                 Step.AGENDA -> AgendaScreen(status, focusFirst, changed)
+
                 Step.WEATHER -> WeatherScreen(status, focusFirst, changed)
+
                 Step.CITIES -> CitiesScreen(focusFirst, changed)
+
                 Step.DONE -> {
                     Body(stringResource(R.string.setup_done))
                     ActionRow(stringResource(R.string.section_agenda), status?.agenda.orEmpty()) {}

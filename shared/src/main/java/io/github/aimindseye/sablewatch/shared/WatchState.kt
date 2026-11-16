@@ -38,6 +38,19 @@ data class WatchState(
 object WatchContract {
     const val PATH_STATE = "/sablewatch/state"
 
+    /**
+     * Links the watch opens on the phone when a bubble is tapped (`sablewatch://open/<target>`).
+     * The phone app turns each into the right screen: Hub, the calendar, or its own weather and world clock settings.
+     */
+    const val OPEN_SCHEME = "sablewatch"
+    const val OPEN_HOST = "open"
+    const val OPEN_HUB = "hub"
+    const val OPEN_AGENDA = "agenda"
+    const val OPEN_WEATHER = "weather"
+    const val OPEN_CITIES = "cities"
+
+    fun openUri(target: String): String = "$OPEN_SCHEME://$OPEN_HOST/$target"
+
     const val KEY_CITIES = "cities"
     const val KEY_EVENT_TITLE = "event_title"
     const val KEY_EVENT_BEGIN = "event_begin"
