@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sable Watch</string>
-    <string name="title">watch</string>
+    <string name="title">Sable Watch</string>
     <string name="section_face">Watch face</string>
     <string name="section_cities">World clock cities</string>
     <string name="section_agenda">Agenda</string>
@@ -9,8 +9,24 @@
     <string name="section_weather">Weather</string>
     <string name="section_health">Health &amp; sensors</string>
     <string name="section_connection">Connection</string>
-    <string name="hint">↑↓ move · Enter open · 1–7 jump · S sync</string>
-    <string name="hint_section">↑↓ move · Enter change · Esc back · S sync</string>
+    <string name="hint">Keys: 1–7 open · S sync</string>
+    <string name="hint_section">Keys: Esc back · S sync</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+
+    <string name="setup_welcome_title">Welcome</string>
+    <string name="setup_welcome">Sable Watch puts your Hub unread count, your next event, the weather and world clocks on your watch face. This takes about a minute, and every step can be skipped and changed later.</string>
+    <string name="setup_start">Get started</string>
+    <string name="setup_skip">Skip setup</string>
+    <string name="setup_skip_detail">go to settings</string>
+    <string name="setup_watch_title">Your watch</string>
+    <string name="setup_watch">Pair the watch with this phone first, in Galaxy Wearable or the Wear OS app. Then install Sable Watch and the Sable face on the watch. The line below turns into "1 watch connected" once the phone can reach it.</string>
+    <string name="setup_check_again">Check again</string>
+    <string name="setup_done_title">All set</string>
+    <string name="setup_done">This is what the watch will show. Finish sends it now, and the phone keeps it up to date from then on. Everything here can be changed from the home list.</string>
+    <string name="setup_finish">Finish</string>
+    <string name="setup_progress">Step %1$d of %2$d</string>
+    <string name="setup_again">Run setup again</string>
     <string name="on">on</string>
     <string name="off">off</string>
     <string name="remove">remove</string>

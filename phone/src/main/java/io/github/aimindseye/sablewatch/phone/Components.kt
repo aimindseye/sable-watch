@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +22,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -64,12 +67,68 @@ internal fun ActionRow(label: String, detail: String, modifier: Modifier = Modif
 internal fun Toggle(label: String, on: Boolean, modifier: Modifier = Modifier, set: (Boolean) -> Unit) =
     ActionRow(label, stringResource(if (on) R.string.on else R.string.off), modifier) { set(!on) }
 
+/** The title, with a tappable back arrow on every screen but the first. */
 @Composable
-internal fun HintBar(text: String, modifier: Modifier = Modifier) = BasicText(
-    text,
-    style = TextStyle(DimColor, 13.sp),
-    modifier = modifier
-        .fillMaxWidth()
-        .background(BarColor)
-        .padding(horizontal = 24.dp, vertical = 8.dp)
-)
+internal fun TopBar(title: String, onBack: (() -> Unit)?) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 24.dp, top = 12.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (onBack != null) {
+            BasicText(
+                "‹",
+                style = TextStyle(Color.White, 34.sp),
+                modifier = Modifier
+                    .clickable(onClickLabel = stringResource(R.string.back), onClick = onBack)
+                    .padding(horizontal = 12.dp)
+            )
+        } else {
+            Spacer(Modifier.width(12.dp))
+        }
+        Title(title)
+    }
+}
+
+/** A button that Enter or a tap activates. The primary one is filled with the accent colour. */
+@Composable
+internal fun PillButton(label: String, primary: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    var focused by remember { mutableStateOf(false) }
+    val shape = RoundedCornerShape(22.dp)
+    BasicText(
+        label,
+        style = TextStyle(if (primary) Color.Black else Color.White, 16.sp),
+        modifier = modifier
+            .background(if (primary) Accent else RowColor, shape)
+            .border(2.dp, if (focused) Color.White else Color.Transparent, shape)
+            .onFocusChanged { focused = it.isFocused }
+            .clickable(onClick = onClick)
+            .padding(horizontal = 22.dp, vertical = 11.dp)
+    )
+}
+
+/** The bar along the bottom: buttons on the left and right, an optional note between them. */
+@Composable
+internal fun BottomBar(
+    modifier: Modifier = Modifier,
+    middle: String = "",
+    left: @Composable () -> Unit = {},
+    right: @Composable () -> Unit = {}
+) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .background(BarColor)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        left()
+        BasicText(
+            middle,
+            style = TextStyle(DimColor, 13.sp, textAlign = TextAlign.Center),
+            modifier = Modifier.weight(1f)
+        )
+        right()
+    }
+}

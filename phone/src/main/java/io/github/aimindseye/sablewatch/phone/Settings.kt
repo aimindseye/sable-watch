@@ -43,6 +43,11 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_SKIP_ALL_DAY, true)
         set(value) = prefs.edit { putBoolean(KEY_SKIP_ALL_DAY, value) }
 
+    /** The first-run setup wizard has been finished or skipped. */
+    var setupDone: Boolean
+        get() = prefs.getBoolean(KEY_SETUP_DONE, false)
+        set(value) = prefs.edit { putBoolean(KEY_SETUP_DONE, value) }
+
     var lastSyncMillis: Long
         get() = prefs.getLong(KEY_LAST_SYNC, 0L)
         set(value) = prefs.edit { putLong(KEY_LAST_SYNC, value) }
@@ -118,6 +123,7 @@ class Settings(context: Context) {
         private const val KEY_HIDE_TITLES = "agenda_hide_titles"
         private const val KEY_SKIP_ALL_DAY = "agenda_skip_all_day"
         private const val KEY_LAST_SYNC = "last_sync"
+        private const val KEY_SETUP_DONE = "setup_done"
         private const val KEY_WEATHER_PLACE = "weather_place"
         private const val KEY_WEATHER_CACHE = "weather_cache"
         private const val KEY_FAHRENHEIT = "weather_fahrenheit"
