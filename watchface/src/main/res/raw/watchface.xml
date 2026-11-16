@@ -87,7 +87,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="76" height="76" alpha="90">
+        <PartDraw x="0" y="0" width="76" height="76" alpha="255">
           <Ellipse x="2" y="2" width="72" height="72">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -117,7 +117,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="76" height="76" alpha="90">
+        <PartDraw x="0" y="0" width="76" height="76" alpha="255">
           <Ellipse x="2" y="2" width="72" height="72">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -141,7 +141,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="76" height="76" alpha="90">
+        <PartDraw x="0" y="0" width="76" height="76" alpha="255">
           <Ellipse x="2" y="2" width="72" height="72">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -168,7 +168,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
+        <PartDraw x="0" y="0" width="72" height="72" alpha="255">
           <Ellipse x="2" y="2" width="68" height="68">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -198,7 +198,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
+        <PartDraw x="0" y="0" width="72" height="72" alpha="255">
           <Ellipse x="2" y="2" width="68" height="68">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -222,7 +222,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
+        <PartDraw x="0" y="0" width="72" height="72" alpha="255">
           <Ellipse x="2" y="2" width="68" height="68">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -239,96 +239,96 @@
         </PartImage>
       </Complication>
     </ComplicationSlot>
-    <ComplicationSlot slotId="3" name="heart_rate" displayName="slot_heart_rate" x="324" y="248" width="72" height="72" supportedTypes="SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE" isCustomizable="TRUE">
+    <ComplicationSlot slotId="3" name="heart_rate" displayName="slot_heart_rate" x="316" y="244" width="84" height="84" supportedTypes="SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE" isCustomizable="TRUE">
       <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="SHORT_TEXT"/>
-      <BoundingOval x="0" y="0" width="72" height="72"/>
+      <BoundingOval x="0" y="0" width="84" height="84"/>
       <Complication type="SHORT_TEXT">
-        <PartDraw x="0" y="0" width="72" height="72">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
-          <Ellipse x="2" y="2" width="68" height="68">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="255">
+          <Ellipse x="2" y="2" width="80" height="80">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="0">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="0">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Stroke color="#FF444444" thickness="1"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="25" y="10" width="22" height="22" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="29" y="12" width="25" height="25" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
-        <PartText x="4" y="32" width="64" height="28">
+        <PartText x="4" y="37" width="76" height="23">
           <Variant mode="AMBIENT" target="alpha" value="200"/>
           <Text align="CENTER" ellipsis="TRUE">
-            <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
+            <Font family="SYNC_TO_DEVICE" size="15" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
           </Text>
         </PartText>
       </Complication>
       <Complication type="MONOCHROMATIC_IMAGE">
-        <PartDraw x="0" y="0" width="72" height="72">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
-          <Ellipse x="2" y="2" width="68" height="68">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="255">
+          <Ellipse x="2" y="2" width="80" height="80">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="0">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="0">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Stroke color="#FF444444" thickness="1"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartImage x="16" y="16" width="39" height="39" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="19" y="18" width="46" height="46" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
       </Complication>
       <Complication type="RANGED_VALUE">
-        <PartDraw x="0" y="0" width="72" height="72">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Fill color="#FF0D1216"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="90">
-          <Ellipse x="2" y="2" width="68" height="68">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="90">
+          <Ellipse x="2" y="2" width="80" height="80">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72" alpha="0">
-          <Ellipse x="1" y="1" width="70" height="70">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="0">
+          <Ellipse x="1" y="1" width="82" height="82">
             <Stroke color="#FF444444" thickness="1"/>
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="255"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="72" height="72">
-          <Arc centerX="36" centerY="36" width="68" height="68" startAngle="0" endAngle="360">
+        <PartDraw x="0" y="0" width="84" height="84">
+          <Arc centerX="42" centerY="42" width="80" height="80" startAngle="0" endAngle="360">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4" cap="ROUND"/>
             <Transform target="endAngle" value="360 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])"/>
           </Arc>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartImage x="25" y="10" width="22" height="22" tintColor="[CONFIGURATION.accent.0]">
+        <PartImage x="29" y="12" width="25" height="25" tintColor="[CONFIGURATION.accent.0]">
           <Variant mode="AMBIENT" target="alpha" value="170"/>
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]"/>
         </PartImage>
-        <PartText x="4" y="32" width="64" height="28">
+        <PartText x="4" y="37" width="76" height="23">
           <Text align="CENTER" ellipsis="TRUE">
-            <Font family="SYNC_TO_DEVICE" size="20" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
+            <Font family="SYNC_TO_DEVICE" size="15" color="#FFFFFFFF" weight="NORMAL"><Template>%s<Parameter expression="[COMPLICATION.TEXT]"/></Template></Font>
           </Text>
         </PartText>
       </Complication>
@@ -343,7 +343,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="68" height="68" alpha="90">
+        <PartDraw x="0" y="0" width="68" height="68" alpha="255">
           <Ellipse x="2" y="2" width="64" height="64">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -373,7 +373,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="68" height="68" alpha="90">
+        <PartDraw x="0" y="0" width="68" height="68" alpha="255">
           <Ellipse x="2" y="2" width="64" height="64">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -437,7 +437,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="84" height="84" alpha="90">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="255">
           <Ellipse x="2" y="2" width="80" height="80">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>
@@ -467,7 +467,7 @@
           </Ellipse>
           <Variant mode="AMBIENT" target="alpha" value="0"/>
         </PartDraw>
-        <PartDraw x="0" y="0" width="84" height="84" alpha="90">
+        <PartDraw x="0" y="0" width="84" height="84" alpha="255">
           <Ellipse x="2" y="2" width="80" height="80">
             <Stroke color="[CONFIGURATION.accent.0]" thickness="4"/>
           </Ellipse>

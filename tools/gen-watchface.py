@@ -20,7 +20,9 @@ ACCENTS = [  # id, label resource, colour
 WHITE = "#FFFFFFFF"
 GREY = "#FF9A9A9A"
 BUBBLE = "#FF0D1216"
-RING_ALPHA = 90  # of 255: the resting ring, dimmer than a range's fill
+TRACK_ALPHA = 90  # of 255: under a range (battery, steps), the unfilled part of the ring
+# Per-slot text size, where the slot's usual source sends long words ("Heart rate" before a reading).
+TEXT_SIZE = {"heart_rate": 15}
 FONT = "SYNC_TO_DEVICE"
 COMPLICATION_END = "      </Complication>\n"
 
@@ -34,7 +36,7 @@ SLOTS = [
      "UNREAD_NOTIFICATION_COUNT", "SHORT_TEXT", SABLE + "MessagesDataSource"),
     (2, "weather", 366, 192, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE", "EMPTY", "SHORT_TEXT",
      SABLE + "WeatherDataSource"),
-    (3, "heart_rate", 360, 284, 36, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
+    (3, "heart_rate", 358, 286, 42, "SHORT_TEXT MONOCHROMATIC_IMAGE RANGED_VALUE", "EMPTY", "SHORT_TEXT"),
     (4, "battery", 140, 350, 34, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
      "WATCH_BATTERY", "RANGED_VALUE"),
     (5, "steps", 232, 357, 42, "RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE",
@@ -57,7 +59,7 @@ def text(x, y, w, h, size, color, expr, indent, weight="NORMAL", ambient=None):
     )
 
 
-def bubble(d, indent):
+def bubble(d, indent, ring_alpha=255):
     return (
         f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}">\n'
         f'{indent}  <Ellipse x="1" y="1" width="{d - 2}" height="{d - 2}">\n'
@@ -65,9 +67,9 @@ def bubble(d, indent):
         f'{indent}  </Ellipse>\n'
         f'{indent}  <Variant mode="AMBIENT" target="alpha" value="0"/>\n'
         f'{indent}</PartDraw>\n'
-        # The same thick ring on every bubble, in a dimmed accent; a range (battery, steps)
-        # fills it in the full accent.
-        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{RING_ALPHA}">\n'
+        # The same thick accent ring on every bubble. Under a range (battery, steps) it is dimmed
+        # to a track that the range fills in the full accent.
+        f'{indent}<PartDraw x="0" y="0" width="{d}" height="{d}" alpha="{ring_alpha}">\n'
         f'{indent}  <Ellipse x="2" y="2" width="{d - 4}" height="{d - 4}">\n'
         f'{indent}    <Stroke color="{ACCENT}" thickness="4"/>\n'
         f'{indent}  </Ellipse>\n'
@@ -112,11 +114,12 @@ def slot(sid, name, cx, cy, r, types, provider, ptype, primary=None):
         f'      <BoundingOval x="0" y="0" width="{d}" height="{d}"/>\n',
     ]
     isz = max(18, r // 2 + 4)
-    tsz = 20 if r >= 36 else 17
+    tsz = TEXT_SIZE.get(name, 20 if r >= 36 else 17)
     j = i + "  "
 
     def complication(ctype, *parts):
-        out.extend([f'      <Complication type="{ctype}">\n', bubble(d, j), *parts, COMPLICATION_END])
+        ring = TRACK_ALPHA if ctype == "RANGED_VALUE" else 255
+        out.extend([f'      <Complication type="{ctype}">\n', bubble(d, j, ring), *parts, COMPLICATION_END])
 
     # SHORT_TEXT: icon on top, value below (the BB10 bubbles).
     complication(
